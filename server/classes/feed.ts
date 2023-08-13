@@ -4,6 +4,7 @@ export interface FeedConfiguration {
     name: string,
     id: string,
     url: string,
+    format: string,
     observables: Array<string>,
     key: string,
     state: boolean,
@@ -37,6 +38,7 @@ export class Feed {
     name: string;
     readonly id: string;
     url: string;
+    format: string;
     observables: Array<string>;
     key: string;
     state: boolean = false;
@@ -49,6 +51,7 @@ export class Feed {
     constructor(obj: FeedConfiguration) {
         this.name = obj.name;
         this.id = obj.id;
+        this.format = obj.format;
         this.url = obj.url;
         this.observables = obj.observables;
         this.key = obj.key;

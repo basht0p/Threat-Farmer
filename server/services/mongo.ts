@@ -11,6 +11,7 @@ export const FeedSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     name: { type: String, required: true },
     url: { type: String, required: true },
+    format: { type: String, required: true },
     observables: { type: Array<string>, required: true },
     key: { type: String, required: false },
     state: { type: Boolean, required: true },

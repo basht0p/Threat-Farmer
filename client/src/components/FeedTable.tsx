@@ -1,9 +1,8 @@
 import { useState, useEffect, JSXElementConstructor } from "react";
-import { Feed, legalObservables } from "../utils/feed";
+import { FeedConfiguration, legalObservables } from "../utils/feed";
 
 function FeedTable() {
-  const [feeds, setState] = useState<any[]>([]);
-  const allFeeds: Array<any> = [];
+  const [feeds, setState] = useState<Array<FeedConfiguration>>([]);
 
   useEffect(() => {
     fetch("http://localhost:8123/api/allfeeds")
@@ -30,7 +29,7 @@ function FeedTable() {
               <tr key={feed.id}>
                 <td key={"name_" + feed.id}>{feed.name}</td>
                 <td key={"url_" + feed.id}>{feed.url}</td>
-                <td key={"type_" + feed.id}>{feed.type}</td>
+                <td key={"type_" + feed.id}>{feed.format}</td>
                 <td key={"obs_" + feed.id}>{feed.observables}</td>
               </tr>
             );

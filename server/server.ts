@@ -23,6 +23,7 @@ const newConfig1 = new Feed({
     name: "feodo",
     id: v4(),
     url: "https://foo.com",
+    format: "json",
     observables: ["ip", "ipport"],
     key: "ip",
     state: false,
@@ -36,6 +37,7 @@ const newConfig2 = new Feed({
     name: "feodo-ip-list",
     id: v4(),
     url: "https://foobie.com",
+    format: "json",
     observables: ["ip", "domain"],
     key: "domain",
     state: true,
@@ -46,5 +48,9 @@ const newConfig2 = new Feed({
 })
 
 allFeeds.push(newConfig1, newConfig2)
+
+allFeeds.forEach( f => {
+    f.save()
+})
 
 app.listen(port);
