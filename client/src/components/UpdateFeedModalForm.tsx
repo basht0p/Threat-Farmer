@@ -1,14 +1,33 @@
 import FeedTestResults from "./FeedTestResults";
+import { FeedConfiguration } from "../utils/feed";
+import { useState, useEffect } from "react";
 import { legalObservables, legalFormats } from "../utils/feed";
 
-function CreateFeedModalForm() {
+interface feedProps {
+  feedId: string;
+  feedName: string;
+}
+
+function UpdateFeedModalForm(props: feedProps) {
+  const [feed, setState] = useState<FeedConfiguration>();
+
+  useEffect(() => {
+    fetch(`http://localhost:8123/api/getfeed?id=${props.feedId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setState(data);
+      });
+  });
+
   return (
     <div className="row">
       <div className="col-md-6">
         <form>
           <div className="form-group">
             <label>Name</label>
-            <input type="text" className="form-control" id="FeedName"></input>
+            <input type="text" className="form-control" id="FeedName">
+              {feed.id}
+            </input>
           </div>
           <br></br>
           <div className="form-group">
@@ -95,4 +114,4 @@ function CreateFeedModalForm() {
   );
 }
 
-export default CreateFeedModalForm;
+export default UpdateFeedModalForm;

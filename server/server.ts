@@ -1,4 +1,4 @@
-import { Feed, getAllFeeds} from "./classes/feed";
+import { Feed, getAllFeeds, getFeed } from "./classes/feed";
 import { v4 } from 'uuid';
 import cors from "cors";
 import express from "express";
@@ -16,6 +16,20 @@ app.get("/api/allfeeds", (req, res) => {
     all.then(f => {
         res.send(f)
     })
+})
+
+app.get("/api/getFeed", (req, res) => {
+    if(req.query.id === undefined){
+        res.send("Error! No id specified")
+    } else {
+        var id = (req.query.id).toString()
+        var result = getFeed(id);
+
+        result.then(f => {
+            res.send(f)
+        })
+    }
+
 })
 
 

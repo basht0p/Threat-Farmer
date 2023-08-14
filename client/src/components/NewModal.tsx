@@ -1,24 +1,47 @@
-import { useState } from "react";
 import CreateFeedModalForm from "./CreateFeedModalForm";
+import UpdateFeedModalForm from "./UpdateFeedModalForm";
+import DeleteFeedModalForm from "./DeleteFeedModalForm";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 interface ModalProps {
   Type: string;
-  ModalTitle: string;
+  feedId?: string;
+  feedName?: string;
+  isVisible: boolean;
+  onClose: () => void;
 }
 
-function NewModal(Props: ModalProps) {
-  const [show, setShow] = useState(false);
-
-  const HandleClose = () => setShow(false);
-  const HandleShow = () => setShow(true);
-
+function NewModal(props: ModalProps) {
+  let ModalTitle;
   let ModalBody;
+  let ModalSize;
 
-  switch (Props.Type) {
+  switch (props.Type) {
     case "Create":
+      ModalTitle = "Create a new feed";
       ModalBody = <CreateFeedModalForm />;
+      ModalSize = "modal modal-xl";
+      break;
+    case "Update":
+      ModalTitle = `Update ${props.feedName}`;
+      ModalBody = (
+        <UpdateFeedModalForm
+          feedId={props.feedId || "noid"}
+          feedName={props.feedName || "noname"}
+        />
+      );
+      ModalSize = "modal modal-xl";
+      break;
+    case "Delete":
+      ModalTitle = `Delete ${props.feedName}`;
+      ModalBody = (
+        <DeleteFeedModalForm
+          feedId={props.feedId || "noid"}
+          feedName={props.feedName || "noname"}
+        />
+      );
+      ModalSize = "modal modal-md";
       break;
     default:
       return "Invalid Modal Type";
@@ -26,21 +49,21 @@ function NewModal(Props: ModalProps) {
 
   return (
     <>
-      <Button variant="primary" onClick={HandleShow}>
-        {Props.Type}
-      </Button>
-
-      <Modal show={show} onHide={HandleClose} className="modal modal-xl">
+      <Modal
+        show={props.isVisible}
+        onHide={props.onClose}
+        className={ModalSize}
+      >
         <Modal.Header closeButton>
-          <Modal.Title>{Props.ModalTitle}</Modal.Title>
+          <Modal.Title>{ModalTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>{ModalBody}</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={HandleClose}>
+          <Button variant="secondary" onClick={props.onClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={HandleClose}>
-            {Props.Type}
+          <Button variant="primary" onClick={props.onClose}>
+            {props.Type}
           </Button>
         </Modal.Footer>
       </Modal>

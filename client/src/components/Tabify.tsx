@@ -1,6 +1,6 @@
 import { useState } from "react";
 import FeedTable from "./FeedTable";
-import NewModal from "./NewModal";
+import NewModalButton from "./NewModalButton";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
@@ -15,7 +15,10 @@ function Tabify() {
       className="mb-4"
     >
       <Tab eventKey="Feeds" title="Feeds">
-        <NewModal Type="Create" ModalTitle="Create a new threat feed" />
+        <NewModalButton
+          modalType="Create"
+          modalTitle="Create a new threat feed"
+        />
         <FeedTable />
       </Tab>
       <Tab eventKey="Silos" title="Silos">
