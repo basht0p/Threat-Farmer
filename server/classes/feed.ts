@@ -118,3 +118,7 @@ export class Feed {
 export async function getAllFeeds(){
     return FeedDb.find()
 }
+
+export async function getFeed(id: string){
+    return FeedDb.findById(id)
+}
