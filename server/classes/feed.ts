@@ -11,6 +11,7 @@ export interface FeedConfiguration {
     comments: boolean,
     headers: boolean,
     purge: boolean,
+    frequency: string,
     map: Array<FeedFieldRule>
 }
 
@@ -41,10 +42,11 @@ export class Feed {
     format: string;
     observables: Array<string>;
     key: string;
-    state: boolean = false;
-    comments: boolean = false;
-    headers: boolean = false;
-    purge: boolean = false;
+    state: boolean;
+    comments: boolean;
+    headers: boolean;
+    purge: boolean;
+    frequency: string;
     map: Array<FeedFieldRule> = [];
 
     //// Define the full feed configuration
@@ -58,6 +60,7 @@ export class Feed {
         this.state = obj.state;
         this.comments = obj.comments;
         this.headers = obj.headers;
+        this.frequency = obj.frequency;
         this.purge = obj.purge;
         this.map = obj.map;
     };

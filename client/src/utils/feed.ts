@@ -9,6 +9,7 @@ export interface FeedConfiguration {
     comments: boolean,
     headers: boolean,
     purge: boolean,
+    frequency: string,
     map: Array<FeedFieldRule>
 }
 

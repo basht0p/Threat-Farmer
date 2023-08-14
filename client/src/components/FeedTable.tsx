@@ -30,23 +30,18 @@ function FeedTable() {
                 <td key={"name_" + feed.id}>{feed.name}</td>
                 <td key={"url_" + feed.id}>{feed.url}</td>
                 <td key={"type_" + feed.id}>{feed.format}</td>
-                <td key={"obs_" + feed.id}>{feed.observables}</td>
+                <td key={"obs_" + feed.id}>
+                  <ul className="list-group list-group-flush">
+                    {feed.observables.map((observable) => {
+                      return <li className="list-group-item">{observable}</li>;
+                    })}
+                  </ul>
+                </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <ul className="list-group">
-        {legalObservables.map((i) => (
-          <li
-            className="list-group-item"
-            key={i}
-            onClick={() => console.log("clicked", i)}
-          >
-            {i}
-          </li>
-        ))}
-      </ul>
     </>
   );
 }

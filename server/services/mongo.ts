@@ -18,6 +18,7 @@ export const FeedSchema = new mongoose.Schema({
     comments: { type: Boolean, required: true },
     headers: { type: Boolean, required: true },
     purge: { type: Boolean, required: true },
+    frequency: { type: String, required: true},
     map: { type: Array<FeedFieldRule>, required: false }
 });
 

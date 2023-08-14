@@ -30,6 +30,7 @@ const newConfig1 = new Feed({
     comments: false,
     headers: false,
     purge: true,
+    frequency: "4h",
     map: []
 })
 
@@ -44,10 +45,41 @@ const newConfig2 = new Feed({
     comments: false,
     headers: false,
     purge: true,
+    frequency: "15m",
     map: []
 })
 
-allFeeds.push(newConfig1, newConfig2)
+const newConfig3 = new Feed({
+    name: "blocklist-de",
+    id: v4(),
+    url: "https://blklst.de",
+    format: "txt",
+    observables: ["ip"],
+    key: "ip",
+    state: true,
+    comments: false,
+    headers: false,
+    purge: true,
+    frequency: "15m",
+    map: []
+})
+
+const newConfig4 = new Feed({
+    name: "threatfox-url-list",
+    id: v4(),
+    url: "https://foobie.com",
+    format: "json",
+    observables: ["url"],
+    key: "url",
+    state: true,
+    comments: false,
+    headers: false,
+    purge: true,
+    frequency: "24h",
+    map: []
+})
+
+allFeeds.push(newConfig1, newConfig2, newConfig3, newConfig4)
 
 allFeeds.forEach( f => {
     f.save()
