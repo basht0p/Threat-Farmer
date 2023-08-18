@@ -38,7 +38,7 @@ function NewModalButton(props: NewModalButtonProps) {
       </Button>
       <NewModal
         Type={props.modalType}
-        feedId={props.feedId || "NoId"}
+        feedId={props.feedId}
         feedName={props.feedName || "NoName"}
         isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}

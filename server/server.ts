@@ -1,7 +1,9 @@
 import { Feed, getAllFeeds, getFeed } from "./classes/feed";
+import { FeedDocument } from "./services/mongo";
 import { v4 } from 'uuid';
 import cors from "cors";
-import express from "express";
+import express, { json } from "express";
+import mongoose from "mongoose";
 
 
 const app = express();
@@ -18,21 +20,37 @@ app.get("/api/allfeeds", (req, res) => {
     })
 })
 
-app.get("/api/getFeed", (req, res) => {
+app.get("/api/getFeed", async (req, res) => {
     if(req.query.id === undefined){
         res.send("Error! No id specified")
     } else {
-        var id = (req.query.id).toString()
-        var result = getFeed(id);
+        var id = (req.query.id).toString();
 
-        result.then(f => {
-            res.send(f)
-        })
+        const r = await getFeed(id);
+
+        if (r !== null) {
+            const feedResult = new Feed({
+                id: `${r._id}`,
+                name: `${r.name}`,
+                url: `${r.url}`,
+                format: `${r.format}`,
+                observables: r.observables,
+                key: `${r.key}`,
+                state: r.state,
+                comments: r.comments,
+                headers: r.headers,
+                purge: r.purge,
+                frequency: `${r.frequency}`,
+                map: r.map
+            })
+            res.send(feedResult)
+        } else {
+            res.send("No feed found with the given id.");
+        }
     }
+});
 
-})
-
-
+/*
 const newConfig1 = new Feed({
     name: "feodo",
     id: v4(),
@@ -93,10 +111,12 @@ const newConfig4 = new Feed({
     map: []
 })
 
+
 allFeeds.push(newConfig1, newConfig2, newConfig3, newConfig4)
 
 allFeeds.forEach( f => {
     f.save()
 })
+*/
 
 app.listen(port);

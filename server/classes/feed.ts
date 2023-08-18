@@ -1,4 +1,7 @@
-import FeedDb from "../services/mongo";
+import { json } from "express";
+import {FeedDb, FeedSchema}  from "../services/mongo";
+import * as mongoose from "mongoose";
+
 
 export interface FeedConfiguration {
     name: string,
@@ -119,6 +122,8 @@ export async function getAllFeeds(){
     return FeedDb.find()
 }
 
+
+
 export async function getFeed(id: string){
-    return FeedDb.findById(id)
+    return FeedDb.findById(id);
 }
