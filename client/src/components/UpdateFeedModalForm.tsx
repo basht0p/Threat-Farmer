@@ -19,11 +19,12 @@ function UpdateFeedModalForm(props: feedProps) {
       })
       .then((data) => {
         if (data != undefined) {
-          console.log(data);
           setState(data);
         }
       });
   }, [props.feedId]);
+
+  console.log(feed?.comments);
 
   if (feed != undefined) {
     return (
@@ -69,10 +70,7 @@ function UpdateFeedModalForm(props: feedProps) {
                 ))}
               </select>
             </div>
-            <div className="form-group">
-              <label>Key</label>
-              <input type="text" className="form-control" id="FeedKey"></input>
-            </div>
+            <br></br>
             <div className="form-group">
               <label>Feed Observables</label>
               <select multiple className="form-control" id="feedObservables">
@@ -87,7 +85,7 @@ function UpdateFeedModalForm(props: feedProps) {
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  value="true"
+                  checked={feed.comments}
                   id="includesComments"
                 ></input>
                 <label className="form-check-label"> Has Comments </label>
@@ -96,7 +94,7 @@ function UpdateFeedModalForm(props: feedProps) {
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  value=""
+                  defaultChecked={feed.headers}
                   id="includesHeaders"
                 ></input>
                 <label className="form-check-label"> Has Headers </label>
