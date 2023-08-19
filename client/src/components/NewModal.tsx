@@ -16,6 +16,7 @@ function NewModal(props: ModalProps) {
   let ModalTitle;
   let ModalBody;
   let ModalSize;
+  let ModalFunction;
 
   switch (props.Type) {
     case "Create":
@@ -39,6 +40,7 @@ function NewModal(props: ModalProps) {
         <DeleteFeedModalForm
           feedId={props.feedId || "noid"}
           feedName={props.feedName || "noname"}
+          onClose={props.onClose}
         />
       );
       ModalSize = "modal modal-md";
@@ -58,14 +60,6 @@ function NewModal(props: ModalProps) {
           <Modal.Title>{ModalTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>{ModalBody}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={props.onClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={props.onClose}>
-            {props.Type}
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

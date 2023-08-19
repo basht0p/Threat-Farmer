@@ -1,7 +1,4 @@
-import { json } from "express";
 import {FeedDb, FeedSchema}  from "../services/mongo";
-import * as mongoose from "mongoose";
-
 
 export interface FeedConfiguration {
     name: string,
@@ -119,11 +116,36 @@ export class Feed {
 }
 
 export async function getAllFeeds(){
-    return FeedDb.find()
+    var r = await FeedDb.find()
+
+    const list: Array<Feed> = [];
+
+    for (var i = 0; i < r.length; i++){
+        const feedResult = new Feed({
+            id: `${r[i]._id}`,
+            name: `${r[i].name}`,
+            url: `${r[i].url}`,
+            format: `${r[i].format}`,
+            observables: r[i].observables,
+            key: `${r[i].key}`,
+            state: r[i].state,
+            comments: r[i].comments,
+            headers: r[i].headers,
+            purge: r[i].purge,
+            frequency: `${r[i].frequency}`,
+            map: r[i].map
+        })
+
+        list.push(feedResult)
+    }
+
+    return list
 }
-
-
 
 export async function getFeed(id: string){
     return FeedDb.findById(id);
+}
+
+export async function deleteFeed(id: string){
+    return FeedDb.findByIdAndDelete(id);
 }

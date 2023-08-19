@@ -1,24 +1,54 @@
-import { Feed, getAllFeeds, getFeed } from "./classes/feed";
-import { FeedDocument } from "./services/mongo";
+import { Feed, getAllFeeds, getFeed, deleteFeed } from "./classes/feed";
+import bodyParser from "body-parser";
 import { v4 } from 'uuid';
 import cors from "cors";
-import express, { json } from "express";
-import mongoose from "mongoose";
+import express from "express";
+import { Server } from "socket.io";
+import { FeedDocument } from "./services/mongo";
+import { ListCollectionsCursor } from "mongodb";
 
-
+// Instantiate Express API
 const app = express();
-const port: number = 8123;
+const expressPort: number = 8123;
+
+// Instantiate Websocket
+const http = require('node:http').Server(app);
+const ioPort: number = 8000;
+const io = new Server(http, {
+    cors: {
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST"]
+    }
+  });
+
+http.listen(ioPort, function(){
+    console.log(`Listening for sockets on port ${ioPort}`)
+});
+
+io.on("connection", async function(socket: any) {
+    console.log("a user connected");
+    var data = getAllFeeds();
+
+    data.then( f => {
+        socket.emit("allfeeds", f)
+        console.log(`This thing!! ${f}`)
+    })
+})
+
 app.use(cors())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
-var allFeeds: Array<Feed> = []
-
+/*
 app.get("/api/allfeeds", (req, res) => {
     var all = getAllFeeds();
 
     all.then(f => {
+        io.emit("allfeeds", JSON.stringify(f))
         res.send(f)
     })
 })
+*/
 
 app.get("/api/getFeed", async (req, res) => {
     if(req.query.id === undefined){
@@ -43,6 +73,7 @@ app.get("/api/getFeed", async (req, res) => {
                 frequency: `${r.frequency}`,
                 map: r.map
             })
+
             res.send(feedResult)
         } else {
             res.send("No feed found with the given id.");
@@ -50,73 +81,50 @@ app.get("/api/getFeed", async (req, res) => {
     }
 });
 
-/*
-const newConfig1 = new Feed({
-    name: "feodo",
-    id: v4(),
-    url: "https://foo.com",
-    format: "json",
-    observables: ["ip", "ipport"],
-    key: "ip",
-    state: false,
-    comments: false,
-    headers: false,
-    purge: true,
-    frequency: "4h",
-    map: []
-})
+app.get("/api/deleteFeed", async (req, res) => {
+    if(req.query.id === undefined){
+        res.send("Error! No id specified")
+    } else {
+        var id = (req.query.id).toString();
 
-const newConfig2 = new Feed({
-    name: "feodo-ip-list",
-    id: v4(),
-    url: "https://foobie.com",
-    format: "json",
-    observables: ["ip", "domain"],
-    key: "domain",
-    state: true,
-    comments: false,
-    headers: false,
-    purge: true,
-    frequency: "15m",
-    map: []
-})
+        const deleteResult = deleteFeed(id);
 
-const newConfig3 = new Feed({
-    name: "blocklist-de",
-    id: v4(),
-    url: "https://blklst.de",
-    format: "txt",
-    observables: ["ip"],
-    key: "ip",
-    state: true,
-    comments: false,
-    headers: false,
-    purge: true,
-    frequency: "15m",
-    map: []
-})
+        if (deleteResult !== null) {
+            var data = getAllFeeds();
 
-const newConfig4 = new Feed({
-    name: "threatfox-url-list",
-    id: v4(),
-    url: "https://foobie.com",
-    format: "json",
-    observables: ["url"],
-    key: "url",
-    state: true,
-    comments: false,
-    headers: false,
-    purge: true,
-    frequency: "24h",
-    map: []
-})
+            data.then( f => {
+                io.sockets.emit("allfeeds", f)
+                console.log(`better update ${f}`)
+            })
+            res.sendStatus(200)
+        } else {
+            res.send("No feed found with the given id.");
+        }
+    }
+});
 
 
-allFeeds.push(newConfig1, newConfig2, newConfig3, newConfig4)
 
-allFeeds.forEach( f => {
-    f.save()
-})
-*/
 
-app.listen(port);
+app.post("/api/createFeed", (req, res) => {
+    const formData = req.body;
+    const newFeed = new Feed({
+        name: formData.name,
+        id: v4(),
+        url: formData.url,
+        format: formData.format,
+        observables: formData.observables,
+        key: formData.key,
+        state: formData.state,
+        comments: formData.comments,
+        headers: formData.headers,
+        purge: formData.purge,
+        frequency: formData.frequency,
+        map: formData.map
+    })
+
+    newFeed.save()
+    res.sendStatus(200)
+});
+
+app.listen(expressPort);

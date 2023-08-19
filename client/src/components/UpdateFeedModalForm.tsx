@@ -14,7 +14,6 @@ function UpdateFeedModalForm(props: feedProps) {
   useEffect(() => {
     fetch(`http://localhost:8123/api/getfeed?id=${props.feedId}`)
       .then((res) => {
-        console.log(res);
         return res.json();
       })
       .then((data) => {
@@ -23,8 +22,6 @@ function UpdateFeedModalForm(props: feedProps) {
         }
       });
   }, [props.feedId]);
-
-  console.log(feed?.comments);
 
   if (feed != undefined) {
     return (
@@ -63,7 +60,11 @@ function UpdateFeedModalForm(props: feedProps) {
             <br></br>
             <div className="form-group">
               <label>Format</label>
-              <select className="form-control" id="feedType">
+              <select
+                className="form-control"
+                id="feedType"
+                value={feed.format}
+              >
                 <option value="">Select a feed type...</option>
                 {legalFormats.map((f) => (
                   <option key={f}>{f}</option>
@@ -73,7 +74,12 @@ function UpdateFeedModalForm(props: feedProps) {
             <br></br>
             <div className="form-group">
               <label>Feed Observables</label>
-              <select multiple className="form-control" id="feedObservables">
+              <select
+                multiple
+                className="form-control"
+                id="feedObservables"
+                value={feed.observables}
+              >
                 {legalObservables.map((o) => (
                   <option key={o}>{o}</option>
                 ))}
@@ -103,7 +109,11 @@ function UpdateFeedModalForm(props: feedProps) {
             <br></br>
             <div className="form-group">
               <label>Update Frequency</label>
-              <select className="form-control" id="updateFrequency">
+              <select
+                className="form-control"
+                id="updateFrequency"
+                value={feed.frequency}
+              >
                 <option value="">Select a update frequency...</option>
                 <option value="1">15 minutes</option>
                 <option value="2">30 minutes</option>
@@ -118,7 +128,7 @@ function UpdateFeedModalForm(props: feedProps) {
               <input
                 className="form-check-input"
                 type="checkbox"
-                value=""
+                checked={feed.purge}
                 id="purgeOnUpdate"
               ></input>
               <label className="form-check-label"> Purge on update </label>

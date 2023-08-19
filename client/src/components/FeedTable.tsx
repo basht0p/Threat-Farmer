@@ -1,19 +1,35 @@
 import { useState, useEffect } from "react";
 import NewModalButton from "./NewModalButton";
-import { FeedConfiguration, FeedFormat } from "../utils/feed";
+import { FeedConfiguration } from "../utils/feed";
+import socket from "../utils/socket";
 
 function FeedTable() {
-  const [feeds, setState] = useState<Array<FeedFormat>>([]);
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [feeds, setState] = useState<Array<FeedConfiguration>>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8123/api/allfeeds")
-      .then((res) => res.json())
-      .then((data) => {
-        setState(data);
-      });
-  }, []);
+    function onConnect() {
+      setIsConnected(true);
+    }
 
-  console.log(JSON.stringify(feeds, null, 2));
+    function onDisconnect() {
+      setIsConnected(false);
+    }
+
+    function updateFeeds(value: Array<FeedConfiguration>) {
+      setState(value);
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("allfeeds", updateFeeds);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("allfeeds", updateFeeds);
+    };
+  }, []);
 
   return (
     <>
@@ -29,40 +45,25 @@ function FeedTable() {
         </thead>
         <tbody>
           {feeds.map((feed) => {
-            var result: FeedConfiguration = {
-              id: `${feed._id}`,
-              name: `${feed.name}`,
-              url: `${feed.url}`,
-              format: `${feed.format}`,
-              observables: feed.observables,
-              key: `${feed.key}`,
-              state: feed.state,
-              comments: feed.comments,
-              headers: feed.headers,
-              purge: feed.purge,
-              frequency: `${feed.frequency}`,
-              map: feed.map,
-            };
-            console.log(` this is id ${result.id}`);
             return (
-              <tr key={result.id} className="align-middle">
-                <td key={"name_" + result.id}>{feed.name}</td>
-                <td key={"url_" + result.id}>{feed.url}</td>
-                <td key={"type_" + result.id}>{feed.format}</td>
-                <td key={"obs_" + result.id}> {feed.observables.join(", ")}</td>
+              <tr key={feed.id} className="align-middle">
+                <td key={"name_" + feed.id}>{feed.name}</td>
+                <td key={"url_" + feed.id}>{feed.url}</td>
+                <td key={"type_" + feed.id}>{feed.format}</td>
+                <td key={"obs_" + feed.id}> {feed.observables.join(", ")}</td>
                 <td>
                   <span>
                     <NewModalButton
                       modalType="Update"
                       modalTitle="Update"
-                      feedId={result.id}
-                      feedName={result.name}
+                      feedId={feed.id}
+                      feedName={feed.name}
                     />
                     <NewModalButton
                       modalType="Delete"
                       modalTitle="Delete"
-                      feedId={result.id}
-                      feedName={result.name}
+                      feedId={feed.id}
+                      feedName={feed.name}
                     />
                   </span>
                 </td>

@@ -13,21 +13,6 @@ export interface FeedConfiguration {
     map: Array<FeedFieldRule>
 }
 
-export interface FeedFormat {
-    _id: string;
-    name: string;
-    url: string;
-    format: string;
-    observables: Array<string>;
-    key?: string;
-    state: boolean;
-    comments: boolean;
-    headers: boolean;
-    purge: boolean;
-    frequency: string;
-    map: Array<FeedFieldRule>;
-  }
-
 export interface FeedFieldRule {
     default: string;
     new: string;
