@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import NewModal from "./NewModal";
 import * as Icon from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
+import { FeedConfiguration } from "../utils/feed";
 
 interface NewModalButtonProps {
   modalType: "Create" | "Update" | "Delete";
   modalTitle: string;
-  feedId?: string;
-  feedName?: string;
+  feed: FeedConfiguration;
 }
 
 function NewModalButton(props: NewModalButtonProps) {
@@ -37,9 +37,8 @@ function NewModalButton(props: NewModalButtonProps) {
         {ButtonIcon}
       </Button>
       <NewModal
-        Type={props.modalType}
-        feedId={props.feedId}
-        feedName={props.feedName || "NoName"}
+        modalType={props.modalType}
+        feed={props.feed}
         isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}
       />

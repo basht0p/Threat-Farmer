@@ -18,6 +18,21 @@ export interface FeedFieldRule {
     new: string;
 }
 
+export const EmptyFeed: FeedConfiguration = {
+    id: "",
+    name: "",
+    url: "",
+    key: "",
+    format: "",
+    observables: [],
+    state: false,
+    comments: false,
+    headers: false,
+    frequency: "",
+    purge: false,
+    map: []
+}
+
 export const legalObservables: Array<string> = [
     "ip",
     "ipport",

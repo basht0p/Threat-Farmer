@@ -11,14 +11,15 @@ function FeedTable() {
     function updateFeeds(value: Array<FeedConfiguration>) {
       setState(value);
     }
+
     if (socket != null) {
-      socket.on("UpdatedFeed", updateFeeds);
+      socket.on("UpdatedFeeds", updateFeeds);
 
       return () => {
-        socket.off("allfeeds", updateFeeds);
+        socket.off("UpdatedFeeds", updateFeeds);
       };
     }
-  }, []);
+  }, [feeds]);
 
   return (
     <>
@@ -45,14 +46,12 @@ function FeedTable() {
                     <NewModalButton
                       modalType="Update"
                       modalTitle="Update"
-                      feedId={feed.id}
-                      feedName={feed.name}
+                      feed={feed}
                     />
                     <NewModalButton
                       modalType="Delete"
                       modalTitle="Delete"
-                      feedId={feed.id}
-                      feedName={feed.name}
+                      feed={feed}
                     />
                   </span>
                 </td>

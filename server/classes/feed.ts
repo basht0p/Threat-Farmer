@@ -100,7 +100,7 @@ export class Feed {
         });
     }
 
-    public update() {
+    public async update() {
         FeedDb.findByIdAndUpdate(
             this.id,
             this,

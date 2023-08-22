@@ -1,13 +1,12 @@
 import CreateFeedModalForm from "./feeds/CreateFeedModalForm";
 import UpdateFeedModalForm from "./feeds/UpdateFeedModalForm";
 import DeleteFeedModalForm from "./feeds/DeleteFeedModalForm";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { FeedConfiguration } from "../utils/feed";
 
 interface ModalProps {
-  Type: string;
-  feedId?: string;
-  feedName?: string;
+  modalType: string;
+  feed: FeedConfiguration;
   isVisible: boolean;
   onClose: () => void;
 }
@@ -16,35 +15,37 @@ function NewModal(props: ModalProps) {
   let ModalTitle;
   let ModalBody;
   let ModalSize;
-  let ModalFunction;
 
-  switch (props.Type) {
+  switch (props.modalType) {
     case "Create":
       ModalTitle = "Create a new feed";
       ModalBody = <CreateFeedModalForm onClose={props.onClose} />;
       ModalSize = "modal modal-xl";
       break;
     case "Update":
-      ModalTitle = `Update ${props.feedName}`;
-      ModalBody = (
-        <UpdateFeedModalForm
-          feedId={props.feedId || "noid"}
-          feedName={props.feedName || "noname"}
-        />
-      );
-      ModalSize = "modal modal-xl";
-      break;
+      if (props.feed != undefined) {
+        ModalTitle = `Update ${props.feed.name}`;
+        ModalBody = (
+          <UpdateFeedModalForm feed={props.feed} onClose={props.onClose} />
+        );
+        ModalSize = "modal modal-xl";
+        break;
+      } else {
+        console.log("no id for update button");
+        break;
+      }
     case "Delete":
-      ModalTitle = `Delete ${props.feedName}`;
-      ModalBody = (
-        <DeleteFeedModalForm
-          feedId={props.feedId || "noid"}
-          feedName={props.feedName || "noname"}
-          onClose={props.onClose}
-        />
-      );
-      ModalSize = "modal modal-md";
-      break;
+      if (props.feed != undefined) {
+        ModalTitle = `Delete ${props.feed.name}`;
+        ModalBody = (
+          <DeleteFeedModalForm feed={props.feed} onClose={props.onClose} />
+        );
+        ModalSize = "modal modal-md";
+        break;
+      } else {
+        console.log("no id for delete button");
+        break;
+      }
     default:
       return "Invalid Modal Type";
   }

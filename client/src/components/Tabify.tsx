@@ -4,9 +4,11 @@ import Socket from "../utils/useSocket";
 import NewModalButton from "./NewModalButton";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import { FeedConfiguration, EmptyFeed } from "../utils/feed";
 
 function Tabify() {
   const [key, setKey] = useState<any | null>("Feeds");
+  let emptyFeed: FeedConfiguration = EmptyFeed;
 
   return (
     <Tabs
@@ -19,6 +21,7 @@ function Tabify() {
         <NewModalButton
           modalType="Create"
           modalTitle="Create a new threat feed"
+          feed={emptyFeed}
         />
         <FeedTable />
       </Tab>
