@@ -1,4 +1,4 @@
-import { Feed, getAllFeeds, getFeed, deleteFeed } from "./classes/feed";
+import { Feed, getAllFeeds, getFeed, deleteFeed, updateFeed } from "./classes/feed";
 import bodyParser from "body-parser";
 import { v4 } from 'uuid';
 import cors from "cors";
@@ -161,7 +161,7 @@ app.post("/api/updateFeed", async (req, res) => {
         map: formData.map
     })
     
-    await newFeed.update()
+    await updateFeed(newFeed.id, newFeed);
 
     var data = getAllFeeds();
     data.then( f => {

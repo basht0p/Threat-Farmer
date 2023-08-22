@@ -99,20 +99,6 @@ export class Feed {
             console.log(`Successfully added configuration for ${feed.name} (${feed.id})`)
         });
     }
-
-    public async update() {
-        FeedDb.findByIdAndUpdate(
-            this.id,
-            this,
-            (err: any, feed: any) => {
-                if (err) {
-                console.log(err);
-                } else {
-                console.log("Successfully updated feed!");
-                }
-            }
-        );
-    }
 }
 
 export async function getAllFeeds(){
@@ -148,4 +134,8 @@ export async function getFeed(id: string){
 
 export async function deleteFeed(id: string){
     return FeedDb.findByIdAndDelete(id);
+}
+
+export async function updateFeed(id: string, newFeed: FeedConfiguration) {
+    FeedDb.findByIdAndUpdate(id, newFeed);
 }

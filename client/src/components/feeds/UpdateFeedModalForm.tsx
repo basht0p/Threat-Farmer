@@ -187,7 +187,10 @@ function UpdateFeedModalForm(props: UpdateFeedModalFormProps, onClose: void) {
             <FeedTestResults />
           </div>
         </div>
-        <Button onClick={submitChanges(feed)} className="btn btn-primary m-1" />
+        <Button
+          onClick={() => submitChanges(feed)}
+          className="btn btn-primary m-1"
+        />
       </>
     );
   }
