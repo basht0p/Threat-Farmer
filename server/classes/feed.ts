@@ -92,7 +92,7 @@ export class Feed {
         }
     }
 
-    public save() {
+    public async save() {
         var feed = new FeedDb(this)
         feed.save()
         .then(() => {

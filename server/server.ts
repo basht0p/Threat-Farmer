@@ -4,8 +4,6 @@ import { v4 } from 'uuid';
 import cors from "cors";
 import express from "express";
 import { Server } from "socket.io";
-import { FeedDocument } from "./services/mongo";
-import { ListCollectionsCursor } from "mongodb";
 
 // Instantiate Express API
 const app = express();
@@ -30,8 +28,7 @@ io.on("connection", async function(socket: any) {
     var data = getAllFeeds();
 
     data.then( f => {
-        socket.emit("allfeeds", f)
-        console.log(`This thing!! ${f}`)
+        socket.emit("UpdatedFeeds", f)
     })
 })
 
@@ -39,23 +36,15 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-/*
-app.get("/api/allfeeds", (req, res) => {
-    var all = getAllFeeds();
-
-    all.then(f => {
-        io.emit("allfeeds", JSON.stringify(f))
-        res.send(f)
-    })
-})
-*/
-
 app.get("/api/getFeed", async (req, res) => {
-    if(req.query.id === undefined){
-        res.send("Error! No id specified")
-    } else {
-        var id = (req.query.id).toString();
 
+    if(req.query.id === undefined){
+
+        res.send("Error! No id specified")
+
+    } else {
+
+        var id = (req.query.id).toString();
         const r = await getFeed(id);
 
         if (r !== null) {
@@ -82,23 +71,31 @@ app.get("/api/getFeed", async (req, res) => {
 });
 
 app.get("/api/deleteFeed", async (req, res) => {
-    if(req.query.id === undefined){
-        res.send("Error! No id specified")
-    } else {
-        var id = (req.query.id).toString();
 
+    if(req.query.id === undefined){
+
+        res.send("Error! No id specified")
+
+    } else {
+
+        // Delete the requested feed
+        var id = (req.query.id).toString();
         const deleteResult = deleteFeed(id);
 
         if (deleteResult !== null) {
-            var data = getAllFeeds();
 
-            data.then( f => {
-                io.sockets.emit("allfeeds", f)
-                console.log(`better update ${f}`)
-            })
+            // Send out the updated feed list
+            var data = await getAllFeeds();
+
+            io.sockets.emit("UpdatedFeeds", data)
+            console.log(`better update ${data}`)
+            
             res.sendStatus(200)
+
         } else {
+
             res.send("No feed found with the given id.");
+
         }
     }
 });
@@ -106,7 +103,8 @@ app.get("/api/deleteFeed", async (req, res) => {
 
 
 
-app.post("/api/createFeed", (req, res) => {
+app.post("/api/createFeed", async (req, res) => {
+
     const formData = req.body;
     const newFeed = new Feed({
         name: formData.name,
@@ -122,9 +120,18 @@ app.post("/api/createFeed", (req, res) => {
         frequency: formData.frequency,
         map: formData.map
     })
+    
+    await newFeed.save()
 
-    newFeed.save()
+    var data = getAllFeeds();
+
+    data.then( f => {
+        io.sockets.emit("UpdatedFeeds", f)
+        console.log(`better update ${f}`)
+    })
+
     res.sendStatus(200)
+
 });
 
 app.listen(expressPort);

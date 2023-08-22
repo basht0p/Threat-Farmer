@@ -1,34 +1,23 @@
 import { useState, useEffect } from "react";
-import NewModalButton from "./NewModalButton";
-import { FeedConfiguration } from "../utils/feed";
-import socket from "../utils/socket";
+import NewModalButton from "../NewModalButton";
+import { FeedConfiguration } from "../../utils/feed";
+import { useSocket } from "../../contexts/SocketProvider";
 
 function FeedTable() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
   const [feeds, setState] = useState<Array<FeedConfiguration>>([]);
+  const socket = useSocket();
 
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
     function updateFeeds(value: Array<FeedConfiguration>) {
       setState(value);
     }
+    if (socket != null) {
+      socket.on("UpdatedFeed", updateFeeds);
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("allfeeds", updateFeeds);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("allfeeds", updateFeeds);
-    };
+      return () => {
+        socket.off("allfeeds", updateFeeds);
+      };
+    }
   }, []);
 
   return (

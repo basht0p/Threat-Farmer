@@ -1,6 +1,6 @@
-import CreateFeedModalForm from "./CreateFeedModalForm";
-import UpdateFeedModalForm from "./UpdateFeedModalForm";
-import DeleteFeedModalForm from "./DeleteFeedModalForm";
+import CreateFeedModalForm from "./feeds/CreateFeedModalForm";
+import UpdateFeedModalForm from "./feeds/UpdateFeedModalForm";
+import DeleteFeedModalForm from "./feeds/DeleteFeedModalForm";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
@@ -21,7 +21,7 @@ function NewModal(props: ModalProps) {
   switch (props.Type) {
     case "Create":
       ModalTitle = "Create a new feed";
-      ModalBody = <CreateFeedModalForm />;
+      ModalBody = <CreateFeedModalForm onClose={props.onClose} />;
       ModalSize = "modal modal-xl";
       break;
     case "Update":
