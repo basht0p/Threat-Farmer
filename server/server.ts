@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import { v4 } from 'uuid';
 import cors from "cors";
 import express from "express";
-import { io, emitUpdatedFeeds } from "./socket";
+import { emitUpdatedFeeds } from "./socket";
 
 // Define backend ports
 const expressPort: number = 8123;
