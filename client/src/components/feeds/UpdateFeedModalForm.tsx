@@ -1,15 +1,19 @@
-import FeedTestResults from "./FeedTestResults";
-import { FeedConfiguration } from "../../utils/feed";
-import Button from "react-bootstrap/Button";
 import { useState } from "react";
-import { legalObservables, legalFormats } from "../../utils/feed";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import {
+  FeedConfiguration,
+  legalObservables,
+  legalFormats,
+} from "../../utils/feed";
+import FeedTestResults from "./FeedTestResults";
 
 interface UpdateFeedModalFormProps {
   feed: FeedConfiguration;
   onClose: () => void;
 }
 
-function UpdateFeedModalForm(props: UpdateFeedModalFormProps, onClose: void) {
+function UpdateFeedModalForm(props: UpdateFeedModalFormProps) {
   const [feed, setState] = useState(props.feed);
 
   const handleMultiSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -33,16 +37,6 @@ function UpdateFeedModalForm(props: UpdateFeedModalFormProps, onClose: void) {
     }
     setState((prevState) => ({ ...prevState, [name]: inputValue }));
   };
-
-  function submitChanges(feed: FeedConfiguration) {
-    fetch("http://localhost:8123/api/updateFeed", {
-      method: "POST",
-      body: JSON.stringify(feed),
-    }).then((res) => {
-      console.log(res.status);
-      return true;
-    });
-  }
 
   if (feed != undefined) {
     return (
@@ -187,10 +181,24 @@ function UpdateFeedModalForm(props: UpdateFeedModalFormProps, onClose: void) {
             <FeedTestResults />
           </div>
         </div>
-        <Button
-          onClick={() => submitChanges(feed)}
-          className="btn btn-primary m-1"
-        />
+        <br></br>
+        <Modal.Footer>
+          <Button
+            className="btn btn-success"
+            onClick={() => {
+              fetch(`http://localhost:8123/api/updateFeed`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(feed),
+              }).then((res) => {
+                props.onClose();
+                return res;
+              });
+            }}
+          >
+            Update
+          </Button>
+        </Modal.Footer>
       </>
     );
   }

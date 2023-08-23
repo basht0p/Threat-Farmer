@@ -137,5 +137,57 @@ export async function deleteFeed(id: string){
 }
 
 export async function updateFeed(id: string, newFeed: FeedConfiguration) {
-    FeedDb.findByIdAndUpdate(id, newFeed);
+    FeedDb.findByIdAndUpdate(id, newFeed).then(result => {
+        if(result != undefined){
+            if(result._id.toString() == id){
+                console.log(`Successfully updated ${newFeed.name} (${id})`)
+                return "Success"
+            }
+        } else {
+            console.log("No result returned from update function.")
+        }
+    }).catch(err => {
+        console.log(`An error occured with updating the DB: ${err}`)
+    });
+}
+
+export async function toggleFeed(id: string) {
+    const currentState = FeedDb.findById(id)
+
+    currentState.then(async r => {
+        if(r != undefined){
+            
+            if(r.state){
+                var newState = false
+            } else {
+                var newState = true
+            }
+
+            const feedResult = new Feed({
+                id: `${r._id}`,
+                name: `${r.name}`,
+                url: `${r.url}`,
+                format: `${r.format}`,
+                observables: r.observables,
+                key: `${r.key}`,
+                state: newState,
+                comments: r.comments,
+                headers: r.headers,
+                purge: r.purge,
+                frequency: `${r.frequency}`,
+                map: r.map
+            })
+
+            await FeedDb.findByIdAndUpdate(id, feedResult).then(() => {
+                if(newState){
+                    console.log(`Successfully enabled ${id}`)
+                } else {
+                    console.log(`Successfully disabled ${id}`)
+                }
+                return;
+            })
+        }
+        
+    })
+    
 }

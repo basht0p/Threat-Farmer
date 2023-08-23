@@ -1,63 +1,32 @@
-import { Feed, getAllFeeds, getFeed, deleteFeed, updateFeed } from "./classes/feed";
+import { Feed, getAllFeeds, getFeed, deleteFeed, updateFeed, toggleFeed } from "./classes/feed";
 import bodyParser from "body-parser";
 import { v4 } from 'uuid';
 import cors from "cors";
 import express from "express";
-import { Server, Socket } from "socket.io";
+import { io, emitUpdatedFeeds } from "./socket";
 
-// Instantiate Express API
+// Define backend ports
+const expressPort: number = 8123;
 
-    const app = express();
-    const expressPort: number = 8123;
+// Instantiate Express
 
-// Instantiate Websocket
-
-    const http = require('node:http').Server(app);
-    const ioPort: number = 8000;
-    const io = new Server(http, {
-        cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST"]
-        }
-    });
-
-    http.listen(ioPort, function(){
-        console.log(`Listening for sockets on port ${ioPort}`)
-    });
-
-
-    function emitUpdatedFeeds(socket: Socket){
-        var data = getAllFeeds();
-
-        data.then( f => {
-            socket.emit("UpdatedFeeds", f)
-        })
-    }
-
-    io.on("connection", async function(socket: Socket) {
-        console.log("New Connection");
-        emitUpdatedFeeds(socket);
-    })
-
+export const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+// Routes
+
 app.get("/ws/feeds", async (req, res) => {
-    console.log("triggered")
-    var data = await getAllFeeds();
-    io.sockets.emit("UpdatedFeeds", data)
+    emitUpdatedFeeds();
     res.sendStatus(200)
 })
 
 app.get("/api/getFeed", async (req, res) => {
 
     if(req.query.id === undefined){
-
         res.send("Error! No id specified")
-
     } else {
-
         var id = (req.query.id).toString();
         const r = await getFeed(id);
 
@@ -99,9 +68,7 @@ app.get("/api/deleteFeed", async (req, res) => {
         if (deleteResult !== null) {
 
             // Send out the updated feed list
-            var data = await getAllFeeds();
-            console.log("deketered")
-            io.sockets.emit("UpdatedFeeds", data)
+            emitUpdatedFeeds();
             res.sendStatus(200)
 
         } else {
@@ -113,8 +80,8 @@ app.get("/api/deleteFeed", async (req, res) => {
 });
 
 app.post("/api/createFeed", async (req, res) => {
-
     const formData = req.body;
+
     const newFeed = new Feed({
         name: formData.name,
         id: v4(),
@@ -130,17 +97,13 @@ app.post("/api/createFeed", async (req, res) => {
         map: formData.map
     })
     
-    await newFeed.save()
+    // Write the new feed to the database
+    await newFeed.save();
 
-    var data = getAllFeeds();
-
-    data.then( f => {
-        io.sockets.emit("UpdatedFeeds", f)
-        console.log(`better update ${f}`)
-    })
+    // Emit the new list of feeds to all websocket clients
+    emitUpdatedFeeds();
 
     res.sendStatus(200)
-
 });
 
 app.post("/api/updateFeed", async (req, res) => {
@@ -163,13 +126,26 @@ app.post("/api/updateFeed", async (req, res) => {
     
     await updateFeed(newFeed.id, newFeed);
 
-    var data = getAllFeeds();
-    data.then( f => {
-        io.sockets.emit("UpdatedFeeds", f)
-        console.log(`better update ${f}`)
-    })
-
+    emitUpdatedFeeds();
     res.sendStatus(200)
+});
+
+app.get("/api/toggleFeed", async (req, res) => {
+    if(req.query.id === undefined){
+        console.log("Got a request to toggle a feed")
+        res.send("Error! No id specified")
+    } else {
+        console.log("Got a request to toggle a feed")
+        var id = (req.query.id).toString();
+
+        toggleFeed(id).then(() => {
+            emitUpdatedFeeds();
+            res.sendStatus(200)
+        }).catch(error => {
+            console.log(error)
+            res.sendStatus(500)
+        });
+    }
 });
 
 app.listen(expressPort);

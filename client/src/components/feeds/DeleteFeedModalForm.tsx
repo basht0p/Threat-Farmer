@@ -11,16 +11,16 @@ function DeleteFeedModalForm(props: feedProps) {
     <div className="row">
       <h5>Are you sure you want to delete {props.feed.name}?</h5>
       <br></br>
+      <br></br>
       <Button
         className="btn btn-danger"
         onClick={() => {
           fetch(
             `http://localhost:8123/api/deleteFeed?id=${props.feed.id}`
           ).then((res) => {
-            console.log(res);
+            props.onClose();
             return res;
           });
-          props.onClose();
         }}
       >
         Delete

@@ -1,19 +1,33 @@
 import FeedTestResults from "./FeedTestResults";
 import { useState } from "react";
-import { legalObservables, legalFormats } from "../../utils/feed";
-import { Button } from "react-bootstrap";
+import { legalObservables, legalFormats, EmptyFeed } from "../../utils/feed";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
-function CreateFeedModalForm(onClose: any) {
-  const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
-  const [key, setKey] = useState("");
-  const [format, setFormat] = useState("");
-  const [observables, setObservables] = useState([]);
-  const [comments, setComments] = useState(false);
-  const [headers, setHeaders] = useState(false);
-  const [frequency, setFrequency] = useState(false);
-  const [map, setMap] = useState([]);
-  const [purge, setPurge] = useState(false);
+function CreateFeedModalForm(props: any) {
+  const [feed, setState] = useState(EmptyFeed);
+
+  const handleMultiSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(e.target.selectedOptions).map(
+      (option) => option.value
+    );
+    setState((prevFeed) => ({ ...prevFeed, observables: selectedOptions }));
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+
+    let inputValue: string | boolean;
+
+    if (type === "checkbox") {
+      inputValue = (e.target as HTMLInputElement).checked;
+    } else {
+      inputValue = value;
+    }
+    setState((prevState) => ({ ...prevState, [name]: inputValue }));
+  };
 
   return (
     <>
@@ -25,8 +39,8 @@ function CreateFeedModalForm(onClose: any) {
               <input
                 type="text"
                 className="form-control"
-                id="FeedName"
-                onChange={(e) => setName(e.target.value)}
+                name="name"
+                onChange={handleChange}
               ></input>
             </div>
             <br></br>
@@ -35,8 +49,8 @@ function CreateFeedModalForm(onClose: any) {
               <input
                 type="url"
                 className="form-control"
-                id="FeedUrl"
-                onChange={(e) => setUrl(e.target.value)}
+                name="url"
+                onChange={handleChange}
               ></input>
             </div>
             <br></br>
@@ -45,8 +59,8 @@ function CreateFeedModalForm(onClose: any) {
               <input
                 type="text"
                 className="form-control"
-                id="FeedKey"
-                onChange={(e) => setKey(e.target.value)}
+                name="key"
+                onChange={handleChange}
               ></input>
             </div>
             <br></br>
@@ -54,8 +68,8 @@ function CreateFeedModalForm(onClose: any) {
               <label>Format</label>
               <select
                 className="form-control"
-                id="feedType"
-                onChange={(e) => setFormat(e.target.value)}
+                name="format"
+                onChange={handleChange}
               >
                 <option value="">Select a feed format...</option>
                 {legalFormats.map((f) => (
@@ -69,8 +83,8 @@ function CreateFeedModalForm(onClose: any) {
               <select
                 multiple
                 className="form-control"
-                id="feedObservables"
-                onChange={(e) => setObservables([])}
+                name="observables"
+                onChange={handleMultiSelectChange}
               >
                 {legalObservables.map((o) => (
                   <option key={o}>{o}</option>
@@ -84,7 +98,8 @@ function CreateFeedModalForm(onClose: any) {
                   className="form-check-input"
                   type="checkbox"
                   value="true"
-                  id="includesComments"
+                  name="comments"
+                  onChange={handleChange}
                 ></input>
                 <label className="form-check-label"> Has Comments </label>
               </div>
@@ -92,8 +107,8 @@ function CreateFeedModalForm(onClose: any) {
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  value=""
-                  id="includesHeaders"
+                  name="headers"
+                  onChange={handleChange}
                 ></input>
                 <label className="form-check-label"> Has Headers </label>
               </div>
@@ -101,7 +116,11 @@ function CreateFeedModalForm(onClose: any) {
             <br></br>
             <div className="form-group">
               <label>Update Frequency</label>
-              <select className="form-control" id="updateFrequency">
+              <select
+                className="form-control"
+                name="frequency"
+                onChange={handleChange}
+              >
                 <option value="">Select a update frequency...</option>
                 <option value="1">15 minutes</option>
                 <option value="2">30 minutes</option>
@@ -116,8 +135,8 @@ function CreateFeedModalForm(onClose: any) {
               <input
                 className="form-check-input"
                 type="checkbox"
-                value=""
-                id="purgeOnUpdate"
+                name="purge"
+                onChange={handleChange}
               ></input>
               <label className="form-check-label"> Purge on update </label>
             </div>
@@ -126,23 +145,25 @@ function CreateFeedModalForm(onClose: any) {
         <div className="col-md-6">
           <FeedTestResults />
         </div>
-        <div className="container">
-          <Button
-            className="btn btn-primary"
-            onClick={() => {
-              fetch(`http://localhost:8123/api/deleteFeed`, {
-                method: "POST",
-              }).then((res) => {
-                console.log(res);
-                return res;
-              });
-              onClose();
-            }}
-          >
-            Create
-          </Button>
-        </div>
       </div>
+      <br></br>
+      <Modal.Footer>
+        <Button
+          className="btn btn-primary"
+          onClick={() => {
+            fetch(`http://localhost:8123/api/createFeed`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(feed),
+            }).then((res) => {
+              props.onClose();
+              return res;
+            });
+          }}
+        >
+          Create
+        </Button>
+      </Modal.Footer>
     </>
   );
 }
