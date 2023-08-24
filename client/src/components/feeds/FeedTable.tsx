@@ -58,13 +58,13 @@ function FeedTable() {
                     <Button
                       className={
                         feed.state
-                          ? "btn btn-secondary m-1"
-                          : "btn btn-primary m-1"
+                          ? "btn btn-secondary m-1 text-center"
+                          : "btn btn-primary m-1 text-center"
                       }
                       name={feed.id}
                       onClick={() => toggleFeedStatus(feed.id)}
                     >
-                      {feed.state ? <Icon.PauseFill /> : <Icon.PlayFill />}
+                      {feed.state ? <><Icon.PauseFill /> Stop </> : <><Icon.PlayFill /> Start </>}
                     </Button>
                     <NewModalButton
                       modalType="Update"

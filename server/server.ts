@@ -64,7 +64,7 @@ app.get("/api/deleteFeed", async (req, res) => {
 
         // Delete the requested feed
         var id = (req.query.id).toString();
-        const deleteResult = deleteFeed(id);
+        const deleteResult = await deleteFeed(id);
 
         if (deleteResult !== null) {
 
