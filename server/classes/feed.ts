@@ -1,5 +1,4 @@
-import {FeedDb, FeedSchema}  from "../services/mongo";
-import { emitUpdatedFeeds } from "../socket";
+import {FeedDb}  from "../services/mongo";
 
 export interface FeedConfiguration {
     name: string,

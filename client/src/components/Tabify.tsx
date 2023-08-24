@@ -1,6 +1,5 @@
 import { useState } from "react";
 import FeedTable from "./feeds/FeedTable";
-import Socket from "../utils/useSocket";
 import NewModalButton from "./NewModalButton";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";

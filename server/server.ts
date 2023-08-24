@@ -1,4 +1,4 @@
-import { Feed, getAllFeeds, getFeed, deleteFeed, updateFeed, toggleFeed } from "./classes/feed";
+import { Feed, getFeed, deleteFeed, updateFeed, toggleFeed } from "./classes/feed";
 import bodyParser from "body-parser";
 import { v4 } from 'uuid';
 import cors from "cors";
@@ -8,7 +8,7 @@ import { emitUpdatedFeeds } from "./socket";
 // Define backend ports
 const expressPort: number = 8123;
 
-// Instantiate Express
+// Instantiate Express and properties
 
 export const app = express();
 app.use(cors())
@@ -17,10 +17,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // Routes
 
+// this route just triggers an emit() for all the feeds
 app.get("/ws/feeds", async (req, res) => {
     emitUpdatedFeeds();
     res.sendStatus(200)
-})
+});
 
 app.get("/api/getFeed", async (req, res) => {
 
