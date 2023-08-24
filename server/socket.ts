@@ -19,7 +19,6 @@ http.listen(ioPort, function(){
 
 
 export function emitUpdatedFeeds(){
-    setTimeout(() => console.log(), 1000)
     var data = getAllFeeds();
 
     data.then( f => {

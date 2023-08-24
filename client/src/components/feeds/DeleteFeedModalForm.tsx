@@ -1,5 +1,6 @@
-import Button from "react-bootstrap/Button";
 import { FeedConfiguration } from "../../utils/feed";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 interface feedProps {
   feed: FeedConfiguration;
@@ -8,24 +9,33 @@ interface feedProps {
 
 function DeleteFeedModalForm(props: feedProps) {
   return (
-    <div className="row">
-      <h5>Are you sure you want to delete {props.feed.name}?</h5>
-      <br></br>
-      <br></br>
-      <Button
-        className="btn btn-danger"
-        onClick={() => {
-          fetch(
-            `http://localhost:8123/api/deleteFeed?id=${props.feed.id}`
-          ).then((res) => {
-            props.onClose();
-            return res;
-          });
-        }}
-      >
-        Delete
-      </Button>
-    </div>
+    <>
+      <div className="row">
+        <p>Delete are you sure you want to delete this feed?</p>
+        <br></br>
+        <p>
+          All data associated with this feed will be deleted from the database.
+        </p>
+      </div>
+      <Modal.Footer>
+        <Button
+          className="btn btn-danger"
+          onClick={() => {
+            fetch(
+              `http://localhost:8123/api/deleteFeed?id=${props.feed.id}`
+            ).then((res) => {
+              props.onClose();
+              return res;
+            });
+          }}
+        >
+          Delete
+        </Button>
+        <Button className="btn btn-secondary" onClick={() => props.onClose()}>
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </>
   );
 }
 

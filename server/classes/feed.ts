@@ -1,4 +1,5 @@
 import {FeedDb, FeedSchema}  from "../services/mongo";
+import { emitUpdatedFeeds } from "../socket";
 
 export interface FeedConfiguration {
     name: string,
@@ -137,7 +138,7 @@ export async function deleteFeed(id: string){
 }
 
 export async function updateFeed(id: string, newFeed: FeedConfiguration) {
-    FeedDb.findByIdAndUpdate(id, newFeed).then(result => {
+    return FeedDb.findByIdAndUpdate(id, newFeed).then(result => {
         if(result != undefined){
             if(result._id.toString() == id){
                 console.log(`Successfully updated ${newFeed.name} (${id})`)
@@ -152,42 +153,33 @@ export async function updateFeed(id: string, newFeed: FeedConfiguration) {
 }
 
 export async function toggleFeed(id: string) {
-    const currentState = FeedDb.findById(id)
+    const r = await FeedDb.findById(id)
 
-    currentState.then(async r => {
-        if(r != undefined){
+    if(r != undefined){
             
-            if(r.state){
-                var newState = false
+        var newState = !r.state
+
+        const feedResult = new Feed({
+            id: `${r._id}`,
+            name: `${r.name}`,
+            url: `${r.url}`,
+            format: `${r.format}`,
+            observables: r.observables,
+            key: `${r.key}`,
+            state: newState,
+            comments: r.comments,
+            headers: r.headers,
+            purge: r.purge,
+            frequency: `${r.frequency}`,
+            map: r.map
+        })
+
+        return FeedDb.findByIdAndUpdate(id, feedResult).then(() => {
+            if(newState){
+                console.log(`Successfully enabled ${id}`)
             } else {
-                var newState = true
+                console.log(`Successfully disabled ${id}`)
             }
-
-            const feedResult = new Feed({
-                id: `${r._id}`,
-                name: `${r.name}`,
-                url: `${r.url}`,
-                format: `${r.format}`,
-                observables: r.observables,
-                key: `${r.key}`,
-                state: newState,
-                comments: r.comments,
-                headers: r.headers,
-                purge: r.purge,
-                frequency: `${r.frequency}`,
-                map: r.map
-            })
-
-            await FeedDb.findByIdAndUpdate(id, feedResult).then(() => {
-                if(newState){
-                    console.log(`Successfully enabled ${id}`)
-                } else {
-                    console.log(`Successfully disabled ${id}`)
-                }
-                return;
-            })
-        }
-        
-    })
-    
+        })
+    }
 }

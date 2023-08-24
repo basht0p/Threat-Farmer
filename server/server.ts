@@ -132,19 +132,13 @@ app.post("/api/updateFeed", async (req, res) => {
 
 app.get("/api/toggleFeed", async (req, res) => {
     if(req.query.id === undefined){
-        console.log("Got a request to toggle a feed")
         res.send("Error! No id specified")
     } else {
-        console.log("Got a request to toggle a feed")
         var id = (req.query.id).toString();
+        await toggleFeed(id)
 
-        toggleFeed(id).then(() => {
-            emitUpdatedFeeds();
-            res.sendStatus(200)
-        }).catch(error => {
-            console.log(error)
-            res.sendStatus(500)
-        });
+        emitUpdatedFeeds();
+        res.sendStatus(200);
     }
 });
 
