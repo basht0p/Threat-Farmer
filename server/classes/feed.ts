@@ -1,4 +1,4 @@
-import {FeedDb}  from "../services/mongo";
+import {FeedDb, SiloDb, dataDb}  from "../services/mongo";
 
 export interface FeedConfiguration {
     name: string,
@@ -94,6 +94,7 @@ export class Feed {
 
     public async save() {
         var feed = new FeedDb(this)
+        dataDb.createCollection(this.id)
         feed.save()
         .then(() => {
             console.log(`Successfully added configuration for ${feed.name} (${feed.id})`)
@@ -133,6 +134,14 @@ export async function getFeed(id: string){
 }
 
 export async function deleteFeed(id: string){
+    const result = await SiloDb.updateMany(
+        { members: id },
+        { $pull: { members: id } }
+    );
+
+    dataDb.dropCollection(id);
+
+    console.log(result)
     return FeedDb.findByIdAndDelete(id);
 }
 

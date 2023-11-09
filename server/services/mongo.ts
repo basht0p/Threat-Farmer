@@ -5,9 +5,12 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 // Initiate database connection
-const DBConnectionString: string = process.env.DB_CONN_STRING ?? 'mongodb://127.0.0.1:27017/threatconfig'
+const ConnectionString: string = process.env.DB_CONN_STRING ?? 'mongodb://127.0.0.1:27017/threatconfig'
 
-mongoose.connect(DBConnectionString);
+const connection = mongoose.createConnection(ConnectionString);
+const configDb = connection.useDb('threatconfig');
+
+export const dataDb = connection.useDb('threatdata');
 
 ///////// Silo DB Configuration
 
@@ -16,10 +19,12 @@ export type SiloDocument = mongoose.Document & Silo;
 export const SiloSchema = new mongoose.Schema({
   _id: { type: String, required: true },
   name: { type: String, required: true },
-  url: { type: Array<string>, required: true }
+  api: { type: String, required: true },
+  members: { type: Array<string>, required: true },
+  state: { type: Boolean, required: true }
 });
 
-export const SiloDb = mongoose.model<Silo>("Silo", SiloSchema);
+export const SiloDb = configDb.model<Silo>("Silo", SiloSchema);
 
 ///////// Feed DB Configuration
 
@@ -40,4 +45,15 @@ export const FeedSchema = new mongoose.Schema({
     map: { type: Array<FeedFieldRule>, required: false }
 });
 
-export const FeedDb = mongoose.model<Feed>("Feed", FeedSchema);
+export const FeedDb = configDb.model<Feed>("Feed", FeedSchema);
+
+///////// Feed Schedule Configuration
+
+export type FeedJob = mongoose.Document;
+
+export const FeedJobSchema = new mongoose.Schema({
+    _id: { type: String, required: true },
+    lastrun: { type: String, required: true}
+});
+
+export const FeedJobDb = configDb.model<Feed>("Feed", FeedSchema);

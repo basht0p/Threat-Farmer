@@ -1,8 +1,10 @@
+import { FeedConfiguration } from "./feed"
+
 export interface SiloConfiguration {
     name: string,
     id: string,
     api: string,
-    format: string,
+    members: Array<String>,
     observables: Array<string>,
     state: boolean
 }
@@ -11,7 +13,7 @@ export const EmptySilo: SiloConfiguration = {
     id: "",
     name: "",
     api: "",
-    format: "",
+    members: [],
     observables: [],
     state: false
 }

@@ -4,6 +4,8 @@ import NewModalButton from "./NewModalButton";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { FeedConfiguration, EmptyFeed } from "../utils/feed";
+import { EmptySilo } from "../utils/silo";
+import SiloTable from "./silos/SiloTable";
 
 function Tabify() {
   const [key, setKey] = useState<any | null>("Feeds");
@@ -18,14 +20,21 @@ function Tabify() {
     >
       <Tab eventKey="Feeds" title="Feeds">
         <NewModalButton
-          modalType="Create"
+          modalType="CreateFeed"
           modalTitle="Create a new threat feed"
-          feed={emptyFeed}
+          feed={EmptyFeed}
+          silo={EmptySilo}
         />
         <FeedTable />
       </Tab>
       <Tab eventKey="Silos" title="Silos">
-        Tab content for Silos
+        <NewModalButton
+          modalType="CreateSilo"
+          modalTitle="Create a new silo to aggregate feeds"
+          feed={EmptyFeed}
+          silo={EmptySilo}
+        />
+        <SiloTable />
       </Tab>
     </Tabs>
   );

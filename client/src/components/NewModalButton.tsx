@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import NewModal from "./NewModal";
 import * as Icon from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
-import { FeedConfiguration } from "../utils/feed";
+import { EmptyFeed, FeedConfiguration } from "../utils/feed";
+import { EmptySilo, SiloConfiguration } from "../utils/silo";
 
 interface NewModalButtonProps {
-  modalType: "Create" | "Update" | "Delete";
+  modalType: "CreateFeed" | "UpdateFeed" | "DeleteFeed" | "CreateSilo" | "UpdateSilo" | "DeleteSilo";
   modalTitle: string;
   feed: FeedConfiguration;
+  silo: SiloConfiguration;
 }
 
 function NewModalButton(props: NewModalButtonProps) {
@@ -17,15 +19,27 @@ function NewModalButton(props: NewModalButtonProps) {
   let ButtonClass;
 
   switch (props.modalType) {
-    case "Create":
+    case "CreateFeed":
       ButtonIcon = "Create";
       ButtonClass = "btn btn-primary m-1";
       break;
-    case "Update":
+    case "UpdateFeed":
       ButtonIcon = <Icon.PencilFill />;
       ButtonClass = "btn btn-success m-1";
       break;
-    case "Delete":
+    case "DeleteFeed":
+      ButtonIcon = <Icon.Trash />;
+      ButtonClass = "btn btn-danger m-1";
+      break;
+    case "CreateSilo":
+      ButtonIcon = "Create";
+      ButtonClass = "btn btn-primary m-1";
+      break;
+    case "UpdateSilo":
+      ButtonIcon = <Icon.PencilFill />;
+      ButtonClass = "btn btn-success m-1";
+      break;
+    case "DeleteSilo":
       ButtonIcon = <Icon.Trash />;
       ButtonClass = "btn btn-danger m-1";
       break;
@@ -39,6 +53,7 @@ function NewModalButton(props: NewModalButtonProps) {
       <NewModal
         modalType={props.modalType}
         feed={props.feed}
+        silo={props.silo}
         isVisible={isModalVisible}
         onClose={() => setModalVisible(false)}
       />

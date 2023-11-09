@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import NewModalButton from "../NewModalButton";
 import { SiloConfiguration } from "../../utils/silo";
+import { FeedConfiguration } from "../../utils/feed";
 import { useSocket } from "../../contexts/SocketProvider";
 import { Button } from "react-bootstrap";
 import * as Icon from "react-bootstrap-icons";
+import { EmptyFeed } from "../../utils/feed";
 
 function SiloTable() {
-  const [silos, setState] = useState<Array<SiloConfiguration>>([]);
+  const [silos, setSiloState] = useState<Array<SiloConfiguration>>([]);
+  const [feeds, setFeedState] = useState<Array<FeedConfiguration>>([]);
   const socket = useSocket();
 
   function toggleSiloStatus(id: string) {
-    fetch(`http://localhost:8123/api/toggleSilo?id=${id}`, { method: "Get" })
+    fetch(`http://localhost:8123/api/toggleSilo?id=${id}`, { method: "GET" })
       .then((response) => {
         console.log(response);
       })
@@ -20,8 +23,23 @@ function SiloTable() {
   }
 
   useEffect(() => {
+
+    function updateFeeds(value: Array<FeedConfiguration>) {
+      setFeedState(value);
+    }
+
+    if (socket != null) {
+      socket.on("UpdatedFeeds", updateFeeds);
+
+      return () => {
+        socket.off("UpdatedFeeds", updateFeeds);
+      };
+    }
+  }, [feeds]);
+
+  useEffect(() => {
     function updateSilos(value: Array<SiloConfiguration>) {
-      setState(value);
+      setSiloState(value);
     }
 
     if (socket != null) {
@@ -39,20 +57,33 @@ function SiloTable() {
         <thead>
           <tr>
             <th scope="col">Name</th>
-            <th scope="col">URL</th>
-            <th scope="col">Format</th>
+            <th scope="col">API</th>
+            <th scope="col">Members</th>
             <th scope="col">Observables</th>
             <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
           {silos.map((silo) => {
+            let observables: Set<string> = new Set();
             return (
               <tr key={silo.id} className="align-middle">
                 <td key={"name_" + silo.id}>{silo.name}</td>
-                <td key={"url_" + silo.id}>{silo.url}</td>
-                <td key={"type_" + silo.id}>{silo.format}</td>
-                <td key={"obs_" + silo.id}> {silo.observables.join(", ")}</td>
+                <td key={"api_" + silo.id}>{`${window.location.href}lookup/${silo.api}`}</td>
+                <td key={"mbrs_" + silo.id}>{silo.members.map((memberId) => {
+                  let feed = feeds.find(obj => obj.id === memberId)
+                  feed?.observables.map((obs) => {
+                    observables.add(obs)
+                  })
+   
+                  return (
+                    <>
+                    {feed?.name}
+                    <br></br>
+                    </>
+                  )
+                })}</td>
+                <td key={"obs_" + silo.id}>{Array.from(observables).join(', ')}</td>
                 <td>
                   <span>
                     <Button
@@ -67,13 +98,15 @@ function SiloTable() {
                       {silo.state ? <><Icon.PauseFill /> Stop </> : <><Icon.PlayFill /> Start </>}
                     </Button>
                     <NewModalButton
-                      modalType="Update"
+                      modalType="UpdateSilo"
                       modalTitle="Update"
+                      feed={EmptyFeed}
                       silo={silo}
                     />
                     <NewModalButton
-                      modalType="Delete"
+                      modalType="DeleteSilo"
                       modalTitle="Delete"
+                      feed={EmptyFeed}
                       silo={silo}
                     />
                   </span>

@@ -1,4 +1,5 @@
 import { getAllFeeds } from "./classes/feed";
+import { getAllSilos } from "./classes/silo";
 import { Server, Socket } from "socket.io";
 import { app } from "./server";
 
@@ -22,12 +23,20 @@ export function emitUpdatedFeeds(){
     var data = getAllFeeds();
 
     data.then( f => {
-        console.log("Emitting updated feeds to all websocket clients...")
         io.sockets.emit("UpdatedFeeds", f)
+    })
+}
+
+export function emitUpdatedSilos(){
+    var data = getAllSilos();
+
+    data.then( s => {
+        io.sockets.emit("UpdatedSilos", s)
     })
 }
 
 io.on("connection", async function(socket: Socket) {
     console.log("New Connection");
     emitUpdatedFeeds();
+    emitUpdatedSilos();
 })

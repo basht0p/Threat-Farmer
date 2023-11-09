@@ -4,6 +4,7 @@ import { FeedConfiguration } from "../../utils/feed";
 import { useSocket } from "../../contexts/SocketProvider";
 import { Button } from "react-bootstrap";
 import * as Icon from "react-bootstrap-icons";
+import { EmptySilo } from "../../utils/silo";
 
 function FeedTable() {
   const [feeds, setState] = useState<Array<FeedConfiguration>>([]);
@@ -67,14 +68,16 @@ function FeedTable() {
                       {feed.state ? <><Icon.PauseFill /> Stop </> : <><Icon.PlayFill /> Start </>}
                     </Button>
                     <NewModalButton
-                      modalType="Update"
+                      modalType="UpdateFeed"
                       modalTitle="Update"
                       feed={feed}
+                      silo={EmptySilo}
                     />
                     <NewModalButton
-                      modalType="Delete"
+                      modalType="DeleteFeed"
                       modalTitle="Delete"
                       feed={feed}
+                      silo={EmptySilo}
                     />
                   </span>
                 </td>
