@@ -1,12 +1,11 @@
 import { Feed, getFeed, deleteFeed, updateFeed, toggleFeed } from "./classes/feed";
 import { Silo, updateSilo, deleteSilo, toggleSilo } from "./classes/silo";
-import { dataDb } from "./services/mongo";
 import bodyParser from "body-parser";
 import { v4 } from 'uuid';
 import cors from "cors";
 import express from "express";
 import { emitUpdatedFeeds, emitUpdatedSilos } from "./socket";
-import { DownloadFeedContent } from "./services/downloader";
+import { startAgenda } from "./services/jobs";
 
 // Define backend ports
 const expressPort: number = 8123;
@@ -17,6 +16,7 @@ export const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+startAgenda();
 
 // Routes
 
@@ -239,14 +239,5 @@ app.get("/api/toggleSilo", async (req, res) => {
     }
 });
 
-app.get("/testing",async (req, res) => {
 
-    await DownloadFeedContent(
-        "https://feodotracker.abuse.ch/downloads/ipblocklist_recommended.json",
-        {type: "json"},
-        "testing"
-    );
-
-    res.sendStatus(200);
-})
 app.listen(expressPort);

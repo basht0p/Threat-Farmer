@@ -1,27 +1,62 @@
-import { dataDb } from "./mongo";
+import { JobAttributesData } from "agenda";
+import { FeedDocument, dataDb } from "./mongo";
 import axios from "axios";
-interface FeedType {
-    type: "csv" | "txt" | "json";
-}
+import { parse } from 'csv-parse/sync';
 
-export async function DownloadFeedContent(url: string, FeedType: FeedType, RequestingFeed: string){
-    const response = await axios.get(url)
+export async function DownloadFeedContent(feedConfig: FeedDocument){
+    const response = await axios.get(feedConfig.url);
+    let FeedData: Array<object>;
 
-    switch (FeedType.type) {
+    switch (feedConfig.format) {
         case "csv":
-            console.log(typeof response.data)
+            // Split the response data by newline and filter out comment lines
+            const filteredData = response.data
+                .split('\n') // Split the data into lines
+                .filter((line: string) => !line.includes('#')) // Filter out lines containing '#'
+                .join('\n') // Join the remaining lines back together
+                .trim(); // Trim trailing newlines
+
+            FeedData = parse(filteredData, {
+                columns: true,
+                skip_empty_lines: true,
+            });
             break;
         case "txt":
-            console.log(response)
+            // Assuming feedConfig.key is a string that represents the key you want to use
+            const keyName = feedConfig.key;
+
+            FeedData = response.data
+                .split('\n') // Split by newline to get individual lines
+                .filter((line: string) => line.trim().length > 0 && !line.trim().startsWith('#')) // Filter out comments and empty lines
+                .map((line: string) => ({ [keyName]: line.trim() })); // Create an object for each line with the specified key
+
             break;
         case "json":
-            let FeedData: Array<object> = response.data;
-            console.log(Object.keys(FeedData).length)
-            FeedData.map((entry) => {
-                dataDb.collection(RequestingFeed).insertOne(entry)
-            })
-            break;  
-        default:
+            FeedData = response.data;
             break;
+        default:
+            return;
     }
+
+
+    if (feedConfig.purge) {
+        await dataDb.dropCollection(feedConfig.id);
+        await dataDb.createCollection(feedConfig.id);
+    }
+
+    FeedData.forEach(async (entry: any) => {
+    
+        // Check if the key exists in the entry
+        if (entry.hasOwnProperty(feedConfig.key)) {
+            await dataDb.collection(feedConfig._id).updateOne(
+                { key: entry[feedConfig.key] },
+                { $set: entry },
+                { upsert: true }
+            );
+        } else {
+            // Handle the error case where the key does not exist
+            console.error(`Key '${feedConfig.key}' not found in entry.`);
+        }
+    });
+    
 }
