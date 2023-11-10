@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import cors from "cors";
 import express from "express";
 import { emitUpdatedFeeds, emitUpdatedSilos } from "./socket";
+import { DownloadFeedContent } from "./services/downloader";
 
 // Define backend ports
 const expressPort: number = 8123;
@@ -163,37 +164,6 @@ app.get("/ws/silos", async (req, res) => {
     res.sendStatus(200)
 });
 
-app.get("/api/getSilo", async (req, res) => {
-
-    if(req.query.id === undefined){
-        res.send("Error! No id specified")
-    } else {
-        var id = (req.query.id).toString();
-        const r = await getFeed(id);
-
-        if (r !== null) {
-            const feedResult = new Feed({
-                id: `${r._id}`,
-                name: `${r.name}`,
-                url: `${r.url}`,
-                format: `${r.format}`,
-                observables: r.observables,
-                key: `${r.key}`,
-                state: r.state,
-                comments: r.comments,
-                headers: r.headers,
-                purge: r.purge,
-                frequency: `${r.frequency}`,
-                map: r.map
-            })
-
-            res.send(feedResult)
-        } else {
-            res.send("No feed found with the given id.");
-        }
-    }
-});
-
 app.get("/api/deleteSilo", async (req, res) => {
 
     if(req.query.id === undefined){
@@ -269,4 +239,14 @@ app.get("/api/toggleSilo", async (req, res) => {
     }
 });
 
+app.get("/testing",async (req, res) => {
+
+    await DownloadFeedContent(
+        "https://feodotracker.abuse.ch/downloads/ipblocklist_recommended.json",
+        {type: "json"},
+        "testing"
+    );
+
+    res.sendStatus(200);
+})
 app.listen(expressPort);
