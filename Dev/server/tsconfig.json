@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES6",
+
+    /* Modules */
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "outDir": "release",
+    /* Type Checking */
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
