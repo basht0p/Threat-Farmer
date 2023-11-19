@@ -69,7 +69,7 @@ function SiloTable() {
             return (
               <tr key={silo.id} className="align-middle">
                 <td key={"name_" + silo.id}>{silo.name}</td>
-                <td key={"api_" + silo.id}>{`${window.location.href}lookup/${silo.api}`}</td>
+                <td key={"api_" + silo.id}>{`${window.location.href}lookup/${silo.api}/<Search Term>`}</td>
                 <td key={"mbrs_" + silo.id}>{silo.members.map((memberId) => {
                   let feed = feeds.find(obj => obj.id === memberId)
                   feed?.observables.map((obs) => {

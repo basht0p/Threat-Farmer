@@ -1,3 +1,6 @@
+import ThemeButton from "./ThemeButton";
+import logo from "../assets/ThreatFarmer Logo.png";
+
 function PageHeader() {
   const FunnyMessages: Array<string> = [
     "Sow some feeds so you can plow through logs",
@@ -15,10 +18,12 @@ function PageHeader() {
   return (
     <>
       <div className="container">
-        <div className="page-header text-center" id="page-header">
+        <ThemeButton />
+        <div className="text-center col-md" id="page-header">
           <br></br>
           <h1>
-            <strong>Threat Farmer</strong>
+            <img src={logo} className="img-fluid" width="5%" />
+            <strong> Threat Farmer</strong>
           </h1>
           <h6>{GetRandomFunnyMessage()}</h6>
         </div>

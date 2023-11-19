@@ -44,19 +44,15 @@ export async function DownloadFeedContent(feedConfig: FeedDocument){
         await dataDb.createCollection(feedConfig.id);
     }
 
-    FeedData.forEach(async (entry: any) => {
-    
-        // Check if the key exists in the entry
+    for (const entry of FeedData) {
         if (entry.hasOwnProperty(feedConfig.key)) {
-            await dataDb.collection(feedConfig._id).updateOne(
-                { key: entry[feedConfig.key] },
+            await dataDb.collection(feedConfig._id).updateMany(
+                { key: entry[feedConfig.key as keyof typeof entry] },
                 { $set: entry },
                 { upsert: true }
             );
         } else {
-            // Handle the error case where the key does not exist
             console.error(`Key '${feedConfig.key}' not found in entry.`);
         }
-    });
-    
+    }
 }

@@ -46,14 +46,3 @@ export const FeedSchema = new mongoose.Schema({
 });
 
 export const FeedDb = configDb.model<Feed>("Feed", FeedSchema);
-
-///////// Feed Schedule Configuration
-
-export type FeedJob = mongoose.Document;
-
-export const FeedJobSchema = new mongoose.Schema({
-    _id: { type: String, required: true },
-    lastrun: { type: String, required: true}
-});
-
-export const FeedJobDb = configDb.model<Feed>("Feed", FeedSchema);

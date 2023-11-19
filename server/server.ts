@@ -6,6 +6,7 @@ import cors from "cors";
 import express from "express";
 import { emitUpdatedFeeds, emitUpdatedSilos } from "./socket";
 import { startAgenda } from "./services/jobs";
+import { FeedDb, SiloDb, dataDb } from "./services/mongo";
 
 // Define backend ports
 const expressPort: number = 8123;
@@ -239,5 +240,52 @@ app.get("/api/toggleSilo", async (req, res) => {
     }
 });
 
+    //////////////////////
+   ///                ///
+  ///    LOOKUPS     ///
+ ///                ///
+//////////////////////
+
+app.get("/lookup/:api/:subject", async (req, res) => {
+
+    let silo = await SiloDb.findOne({ api: req.params.api })
+    let subject: string = req.params.subject;
+
+    if(silo === null){
+        res.sendStatus(404)
+    } else if (!silo.state){
+        res.status(401).send("Silo is disabled")
+    } else if (silo){
+        console.log(silo)
+        console.log(`Looking up ${req.params.subject} in ${req.params.api}`)
+
+        let feeds = silo.members
+        let results: Array<any> = [];
+
+        await Promise.all(feeds.map(async (feed) => {
+            
+            let feedData = dataDb.collection(feed);
+            
+            const feedConfig = await FeedDb.findOne({ "_id": feed });
+
+            if(feedConfig?.observables.includes("url")){
+                subject = decodeURI(subject)
+            }
+
+            let result = await feedData.findOne({ "key": subject });
+            if (result) {
+
+                const { _id, key, ...rest } = result;
+                results.push(rest);
+            }
+        }));
+
+        if(results.length === 0){
+            res.sendStatus(204);    
+        } else {
+            res.status(200).send(results);
+        }
+    }
+});
 
 app.listen(expressPort);

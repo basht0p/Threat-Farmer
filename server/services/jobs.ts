@@ -21,12 +21,17 @@ const agenda = new Agenda.Agenda({ db: { address: mongoConnectionString, collect
 const scheduleDownloadJob = async (feed: FeedDocument) => {
     const jobName = `download feed ${feed._id}`;
     console.log(`Scheduling job: ${jobName}`);
+    console.log
 
     agenda.define(jobName, async (job: Agenda.Job) => {
-        console.log(`Downloading data for feed ID: ${feed._id}`);
         const refreshedFeed = await FeedDb.findOne({ _id: feed._id });
         if (refreshedFeed) {
-            await DownloadFeedContent(refreshedFeed);
+            if(refreshedFeed.state){
+                await DownloadFeedContent(refreshedFeed);
+                console.log(`Executing job for feed: ${feed.name} (${feed._id})`);
+            } else {
+                console.log(`Job for ${feed.name} (${feed._id}) not executed. Feed is disabled.`);
+            }
         }
     });
 
