@@ -1,5 +1,5 @@
 const config = {
-    domainName: "threat.farm"
+    domainName: "threatfarmer.sjrollins.com"
   };
   
   export default config;
