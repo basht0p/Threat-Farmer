@@ -26,7 +26,7 @@ exports.io = new socket_io_1.Server(exports.http, {
         methods: ["GET", "POST"]
     }
 });
-exports.http.listen(ioPort, function () {
+exports.http.listen(ioPort, "0.0.0.0", function () {
     console.log(`Listening for websocket connections on port ${ioPort}`);
 });
 function emitUpdatedFeeds() {

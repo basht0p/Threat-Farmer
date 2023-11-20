@@ -15,7 +15,7 @@ export const io = new Server(http, {
     }
 });
 
-http.listen(ioPort, function(){
+http.listen(ioPort, "0.0.0.0", function(){
     console.log(`Listening for websocket connections on port ${ioPort}`)
 });
 

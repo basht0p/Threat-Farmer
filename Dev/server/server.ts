@@ -296,4 +296,4 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/dist/index.html'));
   });  
 
-app.listen(expressPort);
+app.listen(expressPort, "0.0.0.0");
