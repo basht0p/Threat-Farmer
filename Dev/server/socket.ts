@@ -1,24 +1,22 @@
 import { getAllFeeds } from "./classes/feed";
 import { getAllSilos } from "./classes/silo";
-import { Server, Socket } from "socket.io";
-import { app } from "./server";
+import { Server as HTTPServer } from "http";
+import { Server as SocketIOServer, Socket } from "socket.io";
+import { app, expressPort } from "./server";
 import config from "../config/config";
 
 const ioPort: number = 8000;
 
-export const http = require('node:http').Server(app);
+const httpServer: HTTPServer = app.listen(expressPort, function() {
+    console.log(`Express and WebSocket server running on port`);
+});
 
-export const io = new Server(http, {
+export const io = new SocketIOServer(httpServer, {
     cors: {
     origin: `http://${config.domainName}`,
     methods: ["GET", "POST"]
     }
 });
-
-http.listen(ioPort, "0.0.0.0", function(){
-    console.log(`Listening for websocket connections on port ${ioPort}`)
-});
-
 
 export function emitUpdatedFeeds(){
     var data = getAllFeeds();

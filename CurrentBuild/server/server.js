@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = void 0;
+exports.app = exports.expressPort = void 0;
 const feed_1 = require("./classes/feed");
 const silo_1 = require("./classes/silo");
 const body_parser_1 = __importDefault(require("body-parser"));
@@ -35,7 +35,7 @@ const socket_1 = require("./socket");
 const jobs_1 = require("./services/jobs");
 const mongo_1 = require("./services/mongo");
 // Define backend ports
-const expressPort = 8080;
+exports.expressPort = 8080;
 // Instantiate Express and properties
 exports.app = (0, express_1.default)();
 exports.app.use((0, cors_1.default)());
@@ -264,5 +264,5 @@ exports.app.get("/lookup/:api/:subject", (req, res) => __awaiter(void 0, void 0,
 exports.app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(__dirname + '/dist/index.html'));
 });
-exports.app.listen(expressPort, "0.0.0.0");
+exports.app.listen(exports.expressPort, "0.0.0.0");
 //# sourceMappingURL=server.js.map

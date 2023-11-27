@@ -12,22 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.emitUpdatedSilos = exports.emitUpdatedFeeds = exports.io = exports.http = void 0;
+exports.emitUpdatedSilos = exports.emitUpdatedFeeds = exports.io = void 0;
 const feed_1 = require("./classes/feed");
 const silo_1 = require("./classes/silo");
 const socket_io_1 = require("socket.io");
 const server_1 = require("./server");
 const config_1 = __importDefault(require("../config/config"));
 const ioPort = 8000;
-exports.http = require('node:http').Server(server_1.app);
-exports.io = new socket_io_1.Server(exports.http, {
+const httpServer = server_1.app.listen(server_1.expressPort, function () {
+    console.log(`Express and WebSocket server running on port`);
+});
+exports.io = new socket_io_1.Server(httpServer, {
     cors: {
         origin: `http://${config_1.default.domainName}`,
         methods: ["GET", "POST"]
     }
-});
-exports.http.listen(ioPort, "0.0.0.0", function () {
-    console.log(`Listening for websocket connections on port ${ioPort}`);
 });
 function emitUpdatedFeeds() {
     var data = (0, feed_1.getAllFeeds)();
