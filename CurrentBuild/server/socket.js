@@ -18,8 +18,7 @@ const silo_1 = require("./classes/silo");
 const socket_io_1 = require("socket.io");
 const server_1 = require("./server");
 const config_1 = __importDefault(require("../config/config"));
-const ioPort = 8000;
-const httpServer = server_1.app.listen(server_1.expressPort, function () {
+const httpServer = server_1.app.listen(server_1.expressPort, "0.0.0.0", function () {
     console.log(`Express and WebSocket server running on port`);
 });
 exports.io = new socket_io_1.Server(httpServer, {

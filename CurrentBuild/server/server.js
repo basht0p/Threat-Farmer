@@ -264,5 +264,4 @@ exports.app.get("/lookup/:api/:subject", (req, res) => __awaiter(void 0, void 0,
 exports.app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(__dirname + '/dist/index.html'));
 });
-exports.app.listen(exports.expressPort, "0.0.0.0");
 //# sourceMappingURL=server.js.map
