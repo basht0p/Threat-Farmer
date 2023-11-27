@@ -5,9 +5,7 @@ import { Server as SocketIOServer, Socket } from "socket.io";
 import { app, expressPort } from "./server";
 import config from "../config/config";
 
-const ioPort: number = 8000;
-
-const httpServer: HTTPServer = app.listen(expressPort, function() {
+const httpServer: HTTPServer = app.listen(expressPort, "0.0.0.0", function() {
     console.log(`Express and WebSocket server running on port`);
 });
 

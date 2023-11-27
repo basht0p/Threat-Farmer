@@ -294,6 +294,4 @@ app.get("/lookup/:api/:subject", async (req, res) => {
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/dist/index.html'));
-  });  
-
-app.listen(expressPort, "0.0.0.0");
+  });
