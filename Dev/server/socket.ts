@@ -1,13 +1,11 @@
+import * as http from "http";
 import { getAllFeeds } from "./classes/feed";
 import { getAllSilos } from "./classes/silo";
-import { Server as HTTPServer } from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { app, expressPort } from "./server";
 import config from "../config/config";
 
-const httpServer: HTTPServer = app.listen(expressPort, "0.0.0.0", function() {
-    console.log(`Express and WebSocket server running on port`);
-});
+const httpServer = http.createServer(app);
 
 export const io = new SocketIOServer(httpServer, {
     cors: {
@@ -36,3 +34,7 @@ io.on("connection", async function(socket: Socket) {
     emitUpdatedFeeds();
     emitUpdatedSilos();
 })
+
+httpServer.listen(expressPort, () => {
+    console.log(`Express and WebSocket server running on port ${expressPort}`);
+  });
