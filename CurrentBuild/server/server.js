@@ -35,7 +35,7 @@ const socket_1 = require("./socket");
 const jobs_1 = require("./services/jobs");
 const mongo_1 = require("./services/mongo");
 // Define backend ports
-const expressPort = 80;
+const expressPort = 8080;
 // Instantiate Express and properties
 exports.app = (0, express_1.default)();
 exports.app.use((0, cors_1.default)());

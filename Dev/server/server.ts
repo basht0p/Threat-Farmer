@@ -10,7 +10,7 @@ import { startAgenda } from "./services/jobs";
 import { FeedDb, SiloDb, dataDb } from "./services/mongo";
 
 // Define backend ports
-const expressPort: number = 80;
+const expressPort: number = 8080;
 
 // Instantiate Express and properties
 
