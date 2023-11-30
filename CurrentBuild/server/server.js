@@ -268,5 +268,4 @@ exports.app.get('*', (req, res, next) => {
     }
     res.sendFile(path_1.default.join(__dirname + '/dist/index.html'));
 });
-exports.app.listen(exports.expressPort);
 //# sourceMappingURL=server.js.map
