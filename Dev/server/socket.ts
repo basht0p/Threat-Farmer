@@ -31,6 +31,7 @@ export function emitUpdatedSilos(){
 }
 
 io.on("connection", async function(socket: Socket) {
+    console.log("new connection")
     emitUpdatedFeeds();
     emitUpdatedSilos();
 })

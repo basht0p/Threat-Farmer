@@ -65,6 +65,7 @@ function emitUpdatedSilos() {
 exports.emitUpdatedSilos = emitUpdatedSilos;
 exports.io.on("connection", function (socket) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("new connection");
         emitUpdatedFeeds();
         emitUpdatedSilos();
     });
