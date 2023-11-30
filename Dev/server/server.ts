@@ -250,42 +250,41 @@ app.get("/api/toggleSilo", async (req, res) => {
 //////////////////////
 
 app.get("/lookup/:api/:subject", async (req, res) => {
-
-    let silo = await SiloDb.findOne({ api: req.params.api })
+    let silo = await SiloDb.findOne({ api: req.params.api });
     let subject: string = req.params.subject;
 
-    if(silo === null){
-        res.sendStatus(404)
-    } else if (!silo.state){
-        res.status(401).send("Silo is disabled")
-    } else if (silo){
-        console.log(`Looking up ${req.params.subject} in ${req.params.api}`)
+    if (silo === null) {
+        res.sendStatus(404);
+    } else if (!silo.state) {
+        res.status(401).send("Silo is disabled");
+    } else {
+        console.log(`Looking up ${subject} in ${req.params.api}`);
 
-        let feeds = silo.members
-        let results: Array<any> = [];
+        let feeds = silo.members;
+        let results = new Map(); // Using a Map to track unique keys
 
         await Promise.all(feeds.map(async (feed) => {
-            
             let feedData = dataDb.collection(feed);
-            
             const feedConfig = await FeedDb.findOne({ "_id": feed });
 
-            if(feedConfig?.observables.includes("url")){
-                subject = decodeURI(subject)
+            if (feedConfig?.observables.includes("url")) {
+                subject = decodeURI(subject);
             }
 
             let result = await feedData.findOne({ "key": subject });
             if (result) {
-
-                const { _id, key, ...rest } = result;
-                results.push(rest);
+                // If the key is not already in the results, add it
+                if (!results.has(result.key)) {
+                    const { _id, key, ...rest } = result;
+                    results.set(result.key, rest);
+                }
             }
         }));
 
-        if(results.length === 0){
-            res.sendStatus(204);    
+        if (results.size === 0) {
+            res.sendStatus(204);
         } else {
-            res.status(200).send(results);
+            res.status(200).send(Array.from(results.values())); // Convert the Map values to an array
         }
     }
 });

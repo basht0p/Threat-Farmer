@@ -235,10 +235,10 @@ exports.app.get("/lookup/:api/:subject", (req, res) => __awaiter(void 0, void 0,
     else if (!silo.state) {
         res.status(401).send("Silo is disabled");
     }
-    else if (silo) {
-        console.log(`Looking up ${req.params.subject} in ${req.params.api}`);
+    else {
+        console.log(`Looking up ${subject} in ${req.params.api}`);
         let feeds = silo.members;
-        let results = [];
+        let results = new Map(); // Using a Map to track unique keys
         yield Promise.all(feeds.map((feed) => __awaiter(void 0, void 0, void 0, function* () {
             let feedData = mongo_1.dataDb.collection(feed);
             const feedConfig = yield mongo_1.FeedDb.findOne({ "_id": feed });
@@ -247,15 +247,18 @@ exports.app.get("/lookup/:api/:subject", (req, res) => __awaiter(void 0, void 0,
             }
             let result = yield feedData.findOne({ "key": subject });
             if (result) {
-                const { _id, key } = result, rest = __rest(result, ["_id", "key"]);
-                results.push(rest);
+                // If the key is not already in the results, add it
+                if (!results.has(result.key)) {
+                    const { _id, key } = result, rest = __rest(result, ["_id", "key"]);
+                    results.set(result.key, rest);
+                }
             }
         })));
-        if (results.length === 0) {
+        if (results.size === 0) {
             res.sendStatus(204);
         }
         else {
-            res.status(200).send(results);
+            res.status(200).send(Array.from(results.values())); // Convert the Map values to an array
         }
     }
 }));
