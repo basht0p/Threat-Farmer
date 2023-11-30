@@ -36,6 +36,6 @@ io.on("connection", async function(socket: Socket) {
     emitUpdatedSilos();
 })
 
-httpServer.listen(expressPort, () => {
+httpServer.listen(expressPort, "0.0.0.0", () => {
     console.log(`Express and WebSocket server running on port ${expressPort}`);
   });

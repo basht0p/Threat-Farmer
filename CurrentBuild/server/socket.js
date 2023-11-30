@@ -70,7 +70,7 @@ exports.io.on("connection", function (socket) {
         emitUpdatedSilos();
     });
 });
-httpServer.listen(server_1.expressPort, () => {
+httpServer.listen(server_1.expressPort, "0.0.0.0", () => {
     console.log(`Express and WebSocket server running on port ${server_1.expressPort}`);
 });
 //# sourceMappingURL=socket.js.map
