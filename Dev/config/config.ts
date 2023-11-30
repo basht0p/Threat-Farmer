@@ -1,5 +1,5 @@
 const config = {
-    domainName: "threatfarmer.sjrollins.com"
+    domainName: "localhost"
   };
   
   export default config;
