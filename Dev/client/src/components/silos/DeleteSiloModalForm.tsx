@@ -1,6 +1,7 @@
 import { SiloConfiguration } from "../../utils/silo";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import config from "../../../../config/config";
 
 interface siloProps {
   silo: SiloConfiguration;
@@ -22,7 +23,7 @@ function DeleteSiloModalForm(props: siloProps) {
           className="btn btn-danger"
           onClick={() => {
             fetch(
-              `http://localhost:8123/api/deleteSilo?id=${props.silo.id}`
+              `https://${config.domainName}/api/deleteSilo?id=${props.silo.id}`
             ).then((res) => {
               props.onClose();
               return res;

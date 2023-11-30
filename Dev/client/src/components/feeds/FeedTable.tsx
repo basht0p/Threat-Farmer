@@ -12,7 +12,7 @@ function FeedTable() {
   const socket = useSocket();
 
   function toggleFeedStatus(id: string) {
-    fetch(`http://${config.domainName}/api/toggleFeed?id=${id}`, {
+    fetch(`https://${config.domainName}/api/toggleFeed?id=${id}`, {
       method: "GET",
     })
       .then((response) => {

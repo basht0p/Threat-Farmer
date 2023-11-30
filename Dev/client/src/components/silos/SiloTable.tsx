@@ -14,7 +14,7 @@ function SiloTable() {
   const socket = useSocket();
 
   function toggleSiloStatus(id: string) {
-    fetch(`http://${config.domainName}/api/toggleSilo?id=${id}`, {
+    fetch(`https://${config.domainName}/api/toggleSilo?id=${id}`, {
       method: "GET",
     })
       .then((response) => {

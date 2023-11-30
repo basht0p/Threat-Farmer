@@ -183,7 +183,7 @@ function UpdateFeedModalForm(props: UpdateFeedModalFormProps) {
           <Button
             className="btn btn-success"
             onClick={() => {
-              fetch(`http://${config.domainName}/api/updateFeed`, {
+              fetch(`https://${config.domainName}/api/updateFeed`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(feed),
