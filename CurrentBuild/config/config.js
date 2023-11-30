@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const config = {
-    domainName: "localhost"
+    domainName: "threatfarmer.sjrollins.com"
 };
 exports.default = config;
 //# sourceMappingURL=config.js.map
