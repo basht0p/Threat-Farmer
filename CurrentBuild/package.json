@@ -2,11 +2,11 @@
   "name": "threatfarmer",
   "version": "1.0.0",
   "description": "An all-in-one threat feed aggregator",
-  "main": "server.ts",
+  "main": "socket.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "debug": "nodemon --exec \"node --require ts-node/register server/server.ts\"",
+    "debug": "nodemon --exec \"node --require ts-node/register server/socket.ts\"",
     "build": "tsc && cp package.json ../../../../CurrentBuild"
   },
   "author": "basht0p",
