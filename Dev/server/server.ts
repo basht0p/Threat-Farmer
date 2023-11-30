@@ -292,7 +292,12 @@ app.get("/lookup/:api/:subject", async (req, res) => {
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.get('*', (req, res) => {
+app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/socket.io/')) {
+        // If it's a Socket.IO request, skip this handler
+        return next('route');
+    }
+
     res.sendFile(path.join(__dirname + '/dist/index.html'));
   });
 
