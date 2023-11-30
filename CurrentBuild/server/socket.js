@@ -45,7 +45,7 @@ const config_1 = __importDefault(require("../config/config"));
 const httpServer = http.createServer(server_1.app);
 exports.io = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: `http://${config_1.default.domainName}`,
+        origin: `https://${config_1.default.domainName}`,
         methods: ["GET", "POST"]
     }
 });

@@ -1,15 +1,15 @@
 import * as http from "http";
 import { getAllFeeds } from "./classes/feed";
 import { getAllSilos } from "./classes/silo";
-import { Server as SocketIOServer, Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { app, expressPort } from "./server";
 import config from "../config/config";
 
 const httpServer = http.createServer(app);
 
-export const io = new SocketIOServer(httpServer, {
+export const io = new Server(httpServer, {
     cors: {
-    origin: `http://${config.domainName}`,
+    origin: `https://${config.domainName}`,
     methods: ["GET", "POST"]
     }
 });
