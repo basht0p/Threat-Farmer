@@ -23,7 +23,7 @@ function DeleteFeedModalForm(props: feedProps) {
           className="btn btn-danger"
           onClick={() => {
             fetch(
-              `https://${config.domainName}/api/deleteFeed?id=${props.feed.id}`
+              `${config.uriProtocol}://${config.domainName}/api/deleteFeed?id=${props.feed.id}`
             ).then((res) => {
               props.onClose();
               return res;

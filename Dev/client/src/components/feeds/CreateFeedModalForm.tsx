@@ -37,7 +37,7 @@ function CreateFeedModalForm(props: CreateFeedModalFormProps) {
   });
 
   const onSubmit: SubmitHandler<FeedFormInputs> = (data) => {
-    fetch(`https://${config.domainName}/api/createFeed`, {
+    fetch(`${config.uriProtocol}://${config.domainName}/api/createFeed`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

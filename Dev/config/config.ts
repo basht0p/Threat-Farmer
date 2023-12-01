@@ -1,5 +1,7 @@
 const config = {
-    domainName: "threatfarmer.sjrollins.com"
+    uriProtocol: "http",
+    domainName: "localhost:8080",
+    corsReferrer: "localhost:5173"
   };
   
   export default config;

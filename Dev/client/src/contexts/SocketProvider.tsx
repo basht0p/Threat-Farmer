@@ -14,7 +14,7 @@ export const useSocket = () => {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   console.log("Connection from socket provider started...");
-  const socket = io(`https://${config.domainName}`);
+  const socket = io(`${config.uriProtocol}://${config.domainName}`);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

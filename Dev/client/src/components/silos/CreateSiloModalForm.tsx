@@ -38,7 +38,7 @@ function CreateSiloModalForm(props: CreateSiloModalFormProps) {
 
   // Fetch the feeds upon rendering this component
   useEffect(() => {
-    fetch(`https://${config.domainName}/ws/feeds`, {
+    fetch(`${config.uriProtocol}://${config.domainName}/ws/feeds`, {
       method: "GET",
     });
   }, []);
@@ -58,7 +58,7 @@ function CreateSiloModalForm(props: CreateSiloModalFormProps) {
   }, [feeds]);
 
   const onSubmit: SubmitHandler<SiloFormInputs> = (data) => {
-    fetch(`https://${config.domainName}/api/createSilo`, {
+    fetch(`${config.uriProtocol}://${config.domainName}/api/createSilo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

@@ -46,3 +46,17 @@ export const FeedSchema = new mongoose.Schema({
 });
 
 export const FeedDb = configDb.model<Feed>("Feed", FeedSchema);
+
+/////////// Stats configuration
+
+export type StatsDocument = mongoose.Document & Silo;
+
+export const SiloSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  name: { type: String, required: true },
+  api: { type: String, required: true },
+  members: { type: Array<string>, required: true },
+  state: { type: Boolean, required: true }
+});
+
+export const SiloDb = configDb.model<Silo>("Silo", SiloSchema);

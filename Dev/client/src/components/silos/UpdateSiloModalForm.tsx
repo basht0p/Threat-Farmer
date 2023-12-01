@@ -44,7 +44,7 @@ function UpdateSiloModalForm(props: UpdateSiloModalFormProps) {
 
   // Fetch the feeds upon rendering this component
   useEffect(() => {
-    fetch(`https://${config.domainName}/ws/feeds`, {
+    fetch(`${config.uriProtocol}://${config.domainName}/ws/feeds`, {
       method: "GET",
     });
   }, []);
@@ -64,7 +64,7 @@ function UpdateSiloModalForm(props: UpdateSiloModalFormProps) {
   }, [feeds]);
 
   const onSubmit: SubmitHandler<SiloFormInputs> = (data) => {
-    fetch(`https://${config.domainName}/api/updateSilo`, {
+    fetch(`${config.uriProtocol}://${config.domainName}/api/updateSilo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

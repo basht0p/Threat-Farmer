@@ -9,7 +9,7 @@ const httpServer = http.createServer(app);
 
 export const io = new Server(httpServer, {
     cors: {
-    origin: `https://${config.domainName}`,
+    origin: `${config.uriProtocol}://${config.corsReferrer}`,
     methods: ["GET", "POST"]
     }
 });

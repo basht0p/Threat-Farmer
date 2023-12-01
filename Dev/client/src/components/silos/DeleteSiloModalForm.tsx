@@ -23,7 +23,7 @@ function DeleteSiloModalForm(props: siloProps) {
           className="btn btn-danger"
           onClick={() => {
             fetch(
-              `https://${config.domainName}/api/deleteSilo?id=${props.silo.id}`
+              `${config.uriProtocol}://${config.domainName}/api/deleteSilo?id=${props.silo.id}`
             ).then((res) => {
               props.onClose();
               return res;

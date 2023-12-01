@@ -6,6 +6,7 @@ import Tabs from "react-bootstrap/Tabs";
 import { FeedConfiguration, EmptyFeed } from "../utils/feed";
 import { EmptySilo } from "../utils/silo";
 import SiloTable from "./silos/SiloTable";
+import StatsPage from "./stats/StatsPage";
 
 function Tabify() {
   const [key, setKey] = useState<any | null>("Feeds");
@@ -35,6 +36,9 @@ function Tabify() {
           silo={EmptySilo}
         />
         <SiloTable />
+      </Tab>
+      <Tab eventKey="Stats" title="Stats">
+          <StatsPage />
       </Tab>
     </Tabs>
   );

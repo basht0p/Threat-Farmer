@@ -5,19 +5,32 @@ import { v4 } from 'uuid';
 import cors from "cors";
 import path from "path";
 import express from "express";
+import { Request, Response, NextFunction } from 'express';
 import { emitUpdatedFeeds, emitUpdatedSilos } from "./socket";
 import { startAgenda } from "./services/jobs";
 import { FeedDb, SiloDb, dataDb } from "./services/mongo";
+import RequestStats from "./classes/stats";
 
 // Define backend ports
 export const expressPort: number = 8080;
 
 // Instantiate Express and properties
-
+const stats = new RequestStats();
 export const app = express();
+
+export const countRequest = (req: Request, res: Response, next: NextFunction) => {
+    stats.recordRequest();
+    next();
+};
+
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use((req, res, next) => {
+    stats.recordRequest();
+    next();
+});
+
 startAgenda();
 
 // Routes
@@ -249,7 +262,7 @@ app.get("/api/toggleSilo", async (req, res) => {
  ///                ///
 //////////////////////
 
-app.get("/lookup/:api/:subject", async (req, res) => {
+app.get("/lookup/:api/:subject", countRequest, async (req, res) => {
     let silo = await SiloDb.findOne({ api: req.params.api });
     let subject: string = req.params.subject;
 
@@ -288,6 +301,19 @@ app.get("/lookup/:api/:subject", async (req, res) => {
         }
     }
 });
+
+// Endpoint to get request count since last update
+app.get('/api/stats/request-count', (req, res) => {
+    const count = stats.getRequestCountSinceLastUpdate();
+    res.json({ requestCountSinceLastUpdate: count });
+});
+
+// Endpoint to get average requests per second
+app.get('/api/stats/average-rps', (req, res) => {
+    const averageRPS = stats.getAverageRequestsPerSecond();
+    res.json({ averageRequestsPerSecond: averageRPS });
+});
+
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
